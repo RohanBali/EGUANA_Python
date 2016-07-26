@@ -7,7 +7,7 @@ Created on Sun Jul 24 23:24:40 2016
 
 from tkinter import Tk,simpledialog, Label, Entry, messagebox
 
-class MyDialog(simpledialog.Dialog):
+class CoilNumDialog(simpledialog.Dialog):
 
     def body(self, master):
         
@@ -37,7 +37,7 @@ class MyDialog(simpledialog.Dialog):
             a.config(validate='key',validatecommand=vcmd)
             a.grid(row=i,column=1)
         
-        return self.e1 # initial focus
+        return self.e0 # initial focus
     
     def validate(self):
 
