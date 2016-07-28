@@ -27,14 +27,25 @@ class EguanaMenu(Menu):
 
     self.menu_Filter = Menu(self)
     
-    bV = BooleanVar()
-    bV2 = BooleanVar()
-    
-    self.menu_Filter.add_checkbutton(label="Speech 3D", onvalue=1, offvalue=0, variable=bV, command=self.delegate.speech3DButtonPressed)
-    self.menu_Filter.add_checkbutton(label='Speech 2D',onvalue=1, offvalue=0, variable=bV2, command=self.delegate.speech2DButtonPressed)
-    self.menu_Filter.add_command(label='Swallow 3D',command=self.delegate.swallow3DButtonPressed)
-    self.menu_Filter.add_command(label='Swallow 2D',command=self.delegate.swallow2DButtonPressed)
+    self.b0 = BooleanVar()
+    self.b1 = BooleanVar()
+    self.b2 = BooleanVar()
+    self.b3 = BooleanVar()
+
+    self.menu_Filter.add_checkbutton(label="Speech 3D", onvalue=1, offvalue=0, variable=self.b0, command=self.delegate.speech3DButtonPressed)
+    self.menu_Filter.add_checkbutton(label='Speech 2D',onvalue=1, offvalue=0, variable=self.b1, command=self.delegate.speech2DButtonPressed)
+    self.menu_Filter.add_checkbutton(label='Swallow 3D',onvalue=1, offvalue=0, variable=self.b2,command=self.delegate.swallow3DButtonPressed)
+    self.menu_Filter.add_checkbutton(label='Swallow 2D',onvalue=1, offvalue=0, variable=self.b3,command=self.delegate.swallow2DButtonPressed)
 
     self.add_cascade(menu=self.menu_Filter, label='Filter')
     
     self.entryconfigure('Filter', state = 'disabled')
+    
+    
+    
+ def filterSelected(self,buttonIndex):
+     for i in range(4):
+         if not i == buttonIndex:
+             b = getattr(self,'b'+str(i))
+             b.set(False)
+        

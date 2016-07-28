@@ -21,6 +21,9 @@ from egdialogs import CoilNumDialog
 from egmenu import EguanaMenu
 from egpopup import FilterPopup
 
+from constants import FilterType, InputType
+
+
 class Example(Frame):
   
     def __init__(self, parent):
@@ -53,10 +56,24 @@ class Example(Frame):
     def setupTopBar(self):
         
         self.openButton3D = Button(self.frame,text="Select Directory for 3D EMA",relief=RAISED,command=self.askDirectory)
-        self.openButton3D.pack(side=LEFT,anchor=N,fill=BOTH, expand=True,padx=2, pady=2)
-        self.openButton2D = Button(self.frame,text="Select Directory for 2D EMA",relief=RAISED,command=self.askDirectory);
-        self.openButton2D.pack(side=RIGHT,anchor=N,fill=BOTH, expand=True,padx=2, pady=2)
+        self.openButton3D.grid(row=0,column=0, sticky=N+S+E+W,padx=2,pady =2)
         
+        self.openButton2D = Button(self.frame,text="Select Directory for 2D EMA",relief=RAISED,command=self.askDirectory);
+        self.openButton2D.grid(row=2,column=2, sticky=N+S+E+W,padx=2,pady =2)
+
+        self.p1Button = Button(self.frame,text="Placeholder",relief=RAISED)
+        self.p1Button.grid(row=0,column=1, sticky=N+S+E+W,padx=2,pady =2)
+        self.p2Button = Button(self.frame,text="Placeholder",relief=RAISED)
+        self.p2Button.grid(row=0,column=2, sticky=N+S+E+W,padx=2,pady =2)
+        self.p3Button = Button(self.frame,text="Placeholder",relief=RAISED)
+        self.p3Button.grid(row=1,column=0, sticky=N+S+E+W,padx=2,pady =2)
+        self.p4Button = Button(self.frame,text="Placeholder",relief=RAISED)
+        self.p4Button.grid(row=1,column=2, sticky=N+S+E+W,padx=2,pady =2)
+        self.p5Button = Button(self.frame,text="Placeholder",relief=RAISED)
+        self.p5Button.grid(row=2,column=0, sticky=N+S+E+W,padx=2,pady =2)
+        self.p6Button = Button(self.frame,text="Placeholder",relief=RAISED)
+        self.p6Button.grid(row=2,column=1, sticky=N+S+E+W,padx=2,pady =2)
+
         self.openButton3D.bind('<Motion>',self.cursorPosition)
         self.openButton2D.bind('<Motion>',self.cursorPosition)
 
@@ -65,9 +82,18 @@ class Example(Frame):
         self.photo_label = Label(self.frame,image=self.photo,borderwidth=0,highlightthickness=0)
         self.photo_label.configure(bg='#FADC46')
         
-        self.photo_label.pack(side=BOTTOM,anchor=S,padx=10,pady=10,fill=BOTH, expand=True)        
+        self.photo_label.grid(row=1,column=1, sticky=N+S+E+W,padx=2,pady =2)
+        
         self.photo_label.image = self.photo
     
+    
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.columnconfigure(1, weight=1)
+        self.frame.columnconfigure(2, weight=1)
+        self.frame.rowconfigure(0, weight=1)
+        self.frame.rowconfigure(1, weight=1)
+        self.frame.rowconfigure(2, weight=1)
+        
     def askDirectory(self):
 
         dirStr = filedialog.askdirectory()
@@ -75,14 +101,27 @@ class Example(Frame):
         if len(dirStr):
             self.openButton3D.destroy()
             self.openButton2D.destroy()
+            self.p1Button.destroy()
+            self.p2Button.destroy()
+            self.p3Button.destroy()
+            self.p4Button.destroy()
+            self.p5Button.destroy()
+            self.p6Button.destroy()
+
             self.menubar.entryconfigure('Filter', state = 'active')
             self.photo_label.destroy()
 
             dirStr = 'Input Path : '+dirStr
             
-            self.infoFrame = Frame(self.frame, relief=FLAT, bg='#FADC46')
-            self.infoFrame.pack(side=TOP,anchor=N,fill=X,padx=0, pady=0)
             
+            self.frame.grid_forget()
+            
+           
+
+            self.infoFrame = Frame(self.frame, relief=FLAT, bg='#FADC46')
+            self.infoFrame.grid(row=0,column=0,columnspan=3, sticky=N+S+E+W,padx=2,pady =2)
+               
+        
             self.directoryLabel = Label(self.infoFrame, text="No project currently selected",relief=FLAT)
             self.directoryLabel.grid(row=0,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
             self.directoryLabel.config(text=dirStr)
@@ -98,7 +137,6 @@ class Example(Frame):
            
             self.trialLabel = Label(self.infoFrame,text="Trial Number",relief=FLAT,justify=RIGHT,anchor=E)
             self.trialLabel.grid(row=3,column=0, sticky=N+S+E+W,padx=2,pady =2)
-
 
 
             vcmd = (self.master.register(self.validate),'%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
@@ -143,7 +181,7 @@ class Example(Frame):
     def showPlotTools(self):        
         
         f2= Frame(self.frame, relief=FLAT,bg='#FADC46')
-        f2.pack(side=TOP,expand=1,fill=BOTH,padx=10,pady=10)     
+        f2.grid(row=1,column=0,rowspan=2,columnspan=3,sticky=N+S+E+W,padx=10,pady =10)
         
         b1 = Button(f2,text='3D K',relief=RAISED,command= lambda:self.plotButtonPressed(1))
         b1.grid(row=0, column=0,sticky=N+S+E+W,padx=5,pady =5)
@@ -199,36 +237,11 @@ class Example(Frame):
         if m.isSet():
             print(m.getValues())
         
-    def selectFilter(self):
-        
+    def selectFilter(self):        
         self.top = FilterPopup(self);
-        
-#        self.top.transient(self)
-#        self.top.focus()
-#        
-#        sw = self.parent.winfo_screenwidth()
-#        sh = self.parent.winfo_screenheight()
-#    
-#        self.top.geometry('%dx%d+%d+%d' % (sw/4, sh/4, sw/2-sw/8, sh/2-sh/8))
-#
-#        self.top.grab_set()
-#
-#        self.top.title("Select Filter")
-#
-#        first = Button(self.top,text='Speech 3D',relief=RAISED,command=self.speech3DButtonPressed)
-#        first.pack(side=TOP,expand=1,fill = X,padx=2,pady =2)
-#
-#        second = Button(self.top,text='Speech 2D',relief=RAISED,command=self.speech2DButtonPressed)
-#        second.pack(side=TOP,expand=1,fill = X,padx=2,pady =2)
-#        
-#        third = Button(self.top,text='Sawllow 3D',relief=RAISED,command=self.swallow3DButtonPressed)
-#        third.pack(side=TOP,expand=1,fill = X,padx=2,pady =2)
-#        
-#        fourth = Button(self.top,text='Swallow 2D',relief=RAISED,command=self.swallow2DButtonPressed)
-#        fourth.pack(side=TOP,expand=1,fill = X,padx=2,pady =2)
-#        
 
     def speech3DButtonPressed(self):
+        self.menubar.filterSelected(0)
         self.top.destroy()
         if hasattr(self, 'filterLabel'):
             self.filterLabel.config(text="Filter : speech3D")
@@ -238,6 +251,7 @@ class Example(Frame):
             self.filterButton.destroy()
     
     def speech2DButtonPressed(self):
+        self.menubar.filterSelected(1)
         self.top.destroy()
         if hasattr(self, 'filterLabel'):
             self.filterLabel.config(text="Filter : speech2D")
@@ -247,6 +261,7 @@ class Example(Frame):
             self.filterButton.destroy()
     
     def swallow3DButtonPressed(self):
+        self.menubar.filterSelected(2)
         self.top.destroy()
         if hasattr(self, 'filterLabel'):
             self.filterLabel.config(text="Filter : swallow3D")
@@ -256,6 +271,7 @@ class Example(Frame):
             self.filterButton.destroy()
     
     def swallow2DButtonPressed(self):
+        self.menubar.filterSelected(3)
         self.top.destroy()
         if hasattr(self, 'filterLabel'):
             self.filterLabel.config(text="Filter : swallow2D")
@@ -272,8 +288,7 @@ class Example(Frame):
         
         
         
-    def cursorPosition(self,event):
-        
+    def cursorPosition(self,event):       
         if event.widget ==  self.openButton3D:
             if self.photoName == "eguana2.gif":
                 self.photoName = "eguana.gif"
