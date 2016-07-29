@@ -13,6 +13,7 @@ Author: Jan Bodnar
 Last modified: November 2015
 Website: www.zetcode.com
 """
+import os, os.path
 
 from tkinter import filedialog, FLAT, PhotoImage, Menu, CENTER, S, NW,NE, SW,W,SE, E, Toplevel, Entry, messagebox, simpledialog
 from tkinter import Tk, RIGHT, RAISED, ttk, Frame, Button, Label, Text, TOP,RIDGE, BOTH,BOTTOM, Y,X,W, N, LEFT
@@ -23,8 +24,9 @@ from egpopup import FilterPopup
 
 from constants import FilterType, InputType
 
+from config import eguanaConfig
 
-class Example(Frame):
+class EguanaGUI(Frame):
   
     def __init__(self, parent):
         Frame.__init__(self, parent)   
@@ -55,10 +57,24 @@ class Example(Frame):
 
     def setupTopBar(self):
         
-        self.openButton3D = Button(self.frame,text="Select Directory for 3D EMA",relief=RAISED,command=self.askDirectory)
+        
+        #look in my config dir
+        #look all the config classes
+                
+        
+        for fileName in [name for name in os.listdir('./config') if os.path.isfile('./config/' + name)]:
+                        
+            comp = fileName.split('.')
+            
+            module = __import__('config.'+comp[0])
+            class_ = getattr(module.comp[0],comp[0])
+            inst_ = class_()
+            print(inst_.buttonName)
+            
+        self.openButton3D = Button(self.frame,text="Select Directory for 3D EMA",relief=RAISED,command=lambda:self.askDirectory(InputType.threeDEma))
         self.openButton3D.grid(row=0,column=0, sticky=N+S+E+W,padx=2,pady =2)
         
-        self.openButton2D = Button(self.frame,text="Select Directory for 2D EMA",relief=RAISED,command=self.askDirectory);
+        self.openButton2D = Button(self.frame,text="Select Directory for 2D EMA",relief=RAISED,command=lambda:self.askDirectory(InputType.twoDEma));
         self.openButton2D.grid(row=2,column=2, sticky=N+S+E+W,padx=2,pady =2)
 
         self.p1Button = Button(self.frame,text="Placeholder",relief=RAISED)
@@ -94,11 +110,12 @@ class Example(Frame):
         self.frame.rowconfigure(1, weight=1)
         self.frame.rowconfigure(2, weight=1)
         
-    def askDirectory(self):
+    def askDirectory(self,inType):
 
         dirStr = filedialog.askdirectory()
         
         if len(dirStr):
+            self.inputType = inType
             self.openButton3D.destroy()
             self.openButton2D.destroy()
             self.p1Button.destroy()
@@ -108,7 +125,8 @@ class Example(Frame):
             self.p5Button.destroy()
             self.p6Button.destroy()
 
-            self.menubar.entryconfigure('Filter', state = 'active')
+            self.menubar.inputSelected(self.inputType)
+
             self.photo_label.destroy()
 
             dirStr = 'Input Path : '+dirStr
@@ -185,7 +203,7 @@ class Example(Frame):
         
         b1 = Button(f2,text='3D K',relief=RAISED,command= lambda:self.plotButtonPressed(1))
         b1.grid(row=0, column=0,sticky=N+S+E+W,padx=5,pady =5)
-        
+
         b2 = Button(f2,text='3D Dist',relief=RAISED,command=lambda:self.plotButtonPressed(2))
         b2.grid(row=0, column=1,sticky=N+S+E+W,padx=5,pady =5)
         
@@ -201,6 +219,24 @@ class Example(Frame):
         b6 = Button(f2,text='2D DP',relief=RAISED,command=lambda:self.plotButtonPressed(6))
         b6.grid(row=1, column=2,sticky=N+S+E+W,padx=5,pady =5)
         
+        
+        if self.inputType == InputType.threeDEma:
+            b1.config(state="normal")
+            b2.config(state="normal")
+            b3.config(state="normal")
+            b4.config(state="disabled")
+            b5.config(state="disabled")
+            b6.config(state="disabled")
+        else:
+            b1.config(state="disabled")
+            b2.config(state="disabled")
+            b3.config(state="disabled")
+            b4.config(state="normal")
+            b5.config(state="normal")
+            b6.config(state="normal")
+
+
+            
         f2.columnconfigure(0, weight=1)
         f2.columnconfigure(1, weight=1)
         f2.columnconfigure(2, weight=1)
@@ -238,7 +274,7 @@ class Example(Frame):
             print(m.getValues())
         
     def selectFilter(self):        
-        self.top = FilterPopup(self);
+        self.top = FilterPopup(self,self.inputType);
 
     def speech3DButtonPressed(self):
         self.menubar.filterSelected(0)
@@ -301,6 +337,7 @@ class Example(Frame):
                 
                 
 def main():
+    
     global app
     global root 
     root = Tk()
@@ -310,7 +347,7 @@ def main():
     
     root.geometry('%dx%d+%d+%d' % (sw, sh, 0, 0))
     
-    app = Example(root)
+    app = EguanaGUI(root)
 
     root.mainloop()
 
