@@ -5,11 +5,12 @@ Created on Fri Jul 29 11:00:13 2016
 @author: rohanbali
 """
 
-class eguanaConfig():
+class EguanaConfig():
 
     def __init__(self):
         self.buttonName = ""
         self.filterSupport = []
 
                 
-    
+    def whatsMyName(self):
+        print("EguanaConfig")

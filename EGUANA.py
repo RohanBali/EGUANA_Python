@@ -24,7 +24,7 @@ from egpopup import FilterPopup
 
 from constants import FilterType, InputType
 
-from config import eguanaConfig
+#from config import eguanaConfig
 
 class EguanaGUI(Frame):
   
@@ -58,18 +58,18 @@ class EguanaGUI(Frame):
     def setupTopBar(self):
         
         
-        #look in my config dir
-        #look all the config classes
-                
+
+        self.supportedDevices = []        
         
-        for fileName in [name for name in os.listdir('./config') if os.path.isfile('./config/' + name)]:
-                        
-            comp = fileName.split('.')
+        for fileName in [name for name in os.listdir('./config') if os.path.isfile('./config/' + name) and not name == 'eguanaConfig.py']:
+            components = fileName.split('.')
+            fileName = components[0]
+            className = fileName[0].upper() + fileName[1:]
+            module = __import__("config."+fileName,fromlist=["config."])                        
+            classVar = getattr(module,className)
+            self.supportedDevices.append(classVar())
             
-            module = __import__('config.'+comp[0])
-            class_ = getattr(module.comp[0],comp[0])
-            inst_ = class_()
-            print(inst_.buttonName)
+            
             
         self.openButton3D = Button(self.frame,text="Select Directory for 3D EMA",relief=RAISED,command=lambda:self.askDirectory(InputType.threeDEma))
         self.openButton3D.grid(row=0,column=0, sticky=N+S+E+W,padx=2,pady =2)
