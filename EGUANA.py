@@ -57,8 +57,6 @@ class EguanaGUI(Frame):
 
     def setupTopBar(self):
         
-        
-
         self.supportedDevices = []        
         
         for fileName in [name for name in os.listdir('./config') if os.path.isfile('./config/' + name) and not name == 'eguanaConfig.py' and  name.endswith('.py')]:
@@ -69,9 +67,10 @@ class EguanaGUI(Frame):
                 module = __import__("config."+fileName,fromlist=["config."])                        
                 classVar = getattr(module,className)
                 self.supportedDevices.append(classVar())
+            except:
+                pass
 
-            
-        self.selectMachineFrame = Frame(self.frame, relief=FLAT,bg='#FADC46')
+        self.selectMachineFrame = Frame(self.frame,relief=FLAT,bg='#FADC46')
         self.selectMachineFrame.pack(fill=BOTH,expand=True)
         self.setupSelectMachineButtons()
         
@@ -110,7 +109,7 @@ class EguanaGUI(Frame):
 
         dirStr = filedialog.askdirectory()
         
-        if len(dirStr):
+        if len(dirStr) and inputDevice.isDirectoryValid(dirStr):
             self.inputDevice = inputDevice
             self.selectMachineFrame.destroy()
 
