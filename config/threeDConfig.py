@@ -37,4 +37,15 @@ class ThreeDConfig(EguanaConfig):
         self.swallow3DFilterButtonState = NORMAL
         self.speech2DFilterButtonState = DISABLED
         self.swallow2DFilterButtonState = DISABLED
-                
+    
+    def isDirectoryValid(self, path):
+        fileFound = 0
+        if 'pos' in os.listdir(path):
+            posPath = path + '/pos' 
+            for fileName in os.listdir(posPath):
+                if fileName.endswith('.pos'):
+                    fileFound = 1
+                    break
+        return fileFound
+
+        
