@@ -31,3 +31,6 @@ class EguanaConfig():
         
     def readHeadFile(self,filename):
         return 1
+
+    def isDirectoryValid(self):
+        return
