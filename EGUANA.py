@@ -69,6 +69,7 @@ class EguanaGUI(Frame):
                 module = __import__("config."+fileName,fromlist=["config."])                        
                 classVar = getattr(module,className)
                 self.supportedDevices.append(classVar())
+
             
         self.selectMachineFrame = Frame(self.frame, relief=FLAT,bg='#FADC46')
         self.selectMachineFrame.pack(fill=BOTH,expand=True)
