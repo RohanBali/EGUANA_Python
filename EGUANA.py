@@ -22,9 +22,9 @@ from egdialogs import CoilNumDialog
 from egmenu import EguanaMenu
 from egpopup import FilterPopup
 
-from constants import FilterType, InputType
+import math
 
-#from config import eguanaConfig
+from config.eguanaConfig import EguanaConfig
 
 class EguanaGUI(Frame):
   
@@ -61,7 +61,7 @@ class EguanaGUI(Frame):
 
         self.supportedDevices = []        
         
-        for fileName in [name for name in os.listdir('./config') if os.path.isfile('./config/' + name) and not name == 'eguanaConfig.py']:
+        for fileName in [name for name in os.listdir('./config') if os.path.isfile('./config/' + name) and not name == 'eguanaConfig.py' and  name.endswith('.py')]:
             components = fileName.split('.')
             fileName = components[0]
             className = fileName[0].upper() + fileName[1:]
@@ -69,75 +69,65 @@ class EguanaGUI(Frame):
             classVar = getattr(module,className)
             self.supportedDevices.append(classVar())
             
-            
-            
-        self.openButton3D = Button(self.frame,text="Select Directory for 3D EMA",relief=RAISED,command=lambda:self.askDirectory(InputType.threeDEma))
-        self.openButton3D.grid(row=0,column=0, sticky=N+S+E+W,padx=2,pady =2)
+        self.selectMachineFrame = Frame(self.frame, relief=FLAT,bg='#FADC46')
+        self.selectMachineFrame.pack(fill=BOTH,expand=True)
+        self.setupSelectMachineButtons()
         
-        self.openButton2D = Button(self.frame,text="Select Directory for 2D EMA",relief=RAISED,command=lambda:self.askDirectory(InputType.twoDEma));
-        self.openButton2D.grid(row=2,column=2, sticky=N+S+E+W,padx=2,pady =2)
-
-        self.p1Button = Button(self.frame,text="Placeholder",relief=RAISED)
-        self.p1Button.grid(row=0,column=1, sticky=N+S+E+W,padx=2,pady =2)
-        self.p2Button = Button(self.frame,text="Placeholder",relief=RAISED)
-        self.p2Button.grid(row=0,column=2, sticky=N+S+E+W,padx=2,pady =2)
-        self.p3Button = Button(self.frame,text="Placeholder",relief=RAISED)
-        self.p3Button.grid(row=1,column=0, sticky=N+S+E+W,padx=2,pady =2)
-        self.p4Button = Button(self.frame,text="Placeholder",relief=RAISED)
-        self.p4Button.grid(row=1,column=2, sticky=N+S+E+W,padx=2,pady =2)
-        self.p5Button = Button(self.frame,text="Placeholder",relief=RAISED)
-        self.p5Button.grid(row=2,column=0, sticky=N+S+E+W,padx=2,pady =2)
-        self.p6Button = Button(self.frame,text="Placeholder",relief=RAISED)
-        self.p6Button.grid(row=2,column=1, sticky=N+S+E+W,padx=2,pady =2)
-
-        self.openButton3D.bind('<Motion>',self.cursorPosition)
-        self.openButton2D.bind('<Motion>',self.cursorPosition)
-
+    def setupSelectMachineButtons(self):
+        numDevices = len(self.supportedDevices)
+        numColumns = 3
+        numRows = math.ceil((numDevices+1)/3)
+        
         self.photo = PhotoImage(file="eguana.gif")
         self.photo = self.photo.subsample(2);
-        self.photo_label = Label(self.frame,image=self.photo,borderwidth=0,highlightthickness=0)
+        self.photo_label = Label(self.selectMachineFrame,image=self.photo,borderwidth=0,highlightthickness=0)
         self.photo_label.configure(bg='#FADC46')
+        self.photo_label.grid(row=int(numRows/2),column=1, sticky=N+S+E+W,padx=2,pady =2)
+        self.photo_label.image = self.photo        
         
-        self.photo_label.grid(row=1,column=1, sticky=N+S+E+W,padx=2,pady =2)
-        
-        self.photo_label.image = self.photo
-    
-    
-        self.frame.columnconfigure(0, weight=1)
-        self.frame.columnconfigure(1, weight=1)
-        self.frame.columnconfigure(2, weight=1)
-        self.frame.rowconfigure(0, weight=1)
-        self.frame.rowconfigure(1, weight=1)
-        self.frame.rowconfigure(2, weight=1)
-        
-    def askDirectory(self,inType):
+        index = 0
+        for i in range(numRows):
+            for j in range(numColumns):
+                
+                if not(j == 1 and i == int(numRows/2)) and (index < numDevices):
+                    device = self.supportedDevices[index]
+                    b = Button(self.selectMachineFrame,text=device.buttonName,relief=RAISED, command=lambda device=device :self.machineButtonPressed(device))
+                    b.grid(row=i,column=j, sticky=N+S+E+W,padx=2,pady =2)
+                    index += 1
+
+            
+        for i in range(numRows):
+            self.selectMachineFrame.rowconfigure(i,weight=1)
+         
+        for i in range(numColumns):
+            self.selectMachineFrame.columnconfigure(i,weight=1)
+            
+
+
+    def machineButtonPressed(self,inputDevice):
 
         dirStr = filedialog.askdirectory()
         
         if len(dirStr):
-            self.inputType = inType
-            self.openButton3D.destroy()
-            self.openButton2D.destroy()
-            self.p1Button.destroy()
-            self.p2Button.destroy()
-            self.p3Button.destroy()
-            self.p4Button.destroy()
-            self.p5Button.destroy()
-            self.p6Button.destroy()
+            self.inputDevice = inputDevice
+            self.selectMachineFrame.destroy()
 
-            self.menubar.inputSelected(self.inputType)
+            self.menubar.inputSelected(self.inputDevice)
 
             self.photo_label.destroy()
 
             dirStr = 'Input Path : '+dirStr
-            
-            
-            self.frame.grid_forget()
-            
-           
 
-            self.infoFrame = Frame(self.frame, relief=FLAT, bg='#FADC46')
-            self.infoFrame.grid(row=0,column=0,columnspan=3, sticky=N+S+E+W,padx=2,pady =2)
+
+            
+            self.selectPlotFrame = Frame(self.frame, relief=FLAT,bg='#FADC46')
+            self.selectPlotFrame.pack(fill=BOTH,expand=True)
+            self.selectPlotFrame.rowconfigure(0,weight=1)
+            self.selectPlotFrame.rowconfigure(1,weight=1)
+            self.selectPlotFrame.columnconfigure(0,weight=1)
+
+            self.infoFrame = Frame(self.selectPlotFrame, relief=FLAT, bg='#FADC46')
+            self.infoFrame.grid(row=0,column=0, sticky=N+S+E+W,padx=2,pady =2)
                
         
             self.directoryLabel = Label(self.infoFrame, text="No project currently selected",relief=FLAT)
@@ -198,8 +188,9 @@ class EguanaGUI(Frame):
 
     def showPlotTools(self):        
         
-        f2= Frame(self.frame, relief=FLAT,bg='#FADC46')
-        f2.grid(row=1,column=0,rowspan=2,columnspan=3,sticky=N+S+E+W,padx=10,pady =10)
+        
+        f2= Frame(self.selectPlotFrame, relief=FLAT,bg='#FADC46')
+        f2.grid(row=1,column=0,sticky=N+S+E+W,padx=10,pady =10)
         
         b1 = Button(f2,text='3D K',relief=RAISED,command= lambda:self.plotButtonPressed(1))
         b1.grid(row=0, column=0,sticky=N+S+E+W,padx=5,pady =5)
@@ -220,30 +211,20 @@ class EguanaGUI(Frame):
         b6.grid(row=1, column=2,sticky=N+S+E+W,padx=5,pady =5)
         
         
-        if self.inputType == InputType.threeDEma:
-            b1.config(state="normal")
-            b2.config(state="normal")
-            b3.config(state="normal")
-            b4.config(state="disabled")
-            b5.config(state="disabled")
-            b6.config(state="disabled")
-        else:
-            b1.config(state="disabled")
-            b2.config(state="disabled")
-            b3.config(state="disabled")
-            b4.config(state="normal")
-            b5.config(state="normal")
-            b6.config(state="normal")
+    
+        b1.config(state=self.inputDevice.plot3DKButtonState)
+        b2.config(state=self.inputDevice.plot3DDstButtonState)
+        b3.config(state=self.inputDevice.plot3DDpButtonState)
+        b4.config(state=self.inputDevice.plot2DKButtonState)
+        b5.config(state=self.inputDevice.plot2DDstButtonState)
+        b6.config(state=self.inputDevice.plot2DDpButtonState)
 
-
-            
         f2.columnconfigure(0, weight=1)
         f2.columnconfigure(1, weight=1)
         f2.columnconfigure(2, weight=1)
 
         f2.rowconfigure(0, weight=1)
         f2.rowconfigure(1, weight=1)
-       
        
     def plotButtonPressed(self,number):
         trialNum = self.trialEntry.get()
@@ -274,7 +255,7 @@ class EguanaGUI(Frame):
             print(m.getValues())
         
     def selectFilter(self):        
-        self.top = FilterPopup(self,self.inputType);
+        self.top = FilterPopup(self,self.inputDevice);
 
     def speech3DButtonPressed(self):
         self.menubar.filterSelected(0)

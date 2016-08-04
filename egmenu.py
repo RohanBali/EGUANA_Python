@@ -7,8 +7,6 @@ Created on Tue Jul 26 10:15:51 2016
 from tkinter import Menu, DISABLED, NORMAL
 from tkinter import BooleanVar
 
-from constants import InputType
-
 class EguanaMenu(Menu):
     
  def __init__(self, parent,delegate):
@@ -52,17 +50,11 @@ class EguanaMenu(Menu):
              b.set(False)
         
         
- def inputSelected(self,inType):
+ def inputSelected(self,inputDevice):
      self.entryconfigure('Filter', state = 'active')
-     
-     if inType == InputType.threeDEma:
-         self.menu_Filter.entryconfig(0, state=NORMAL)
-         self.menu_Filter.entryconfig(1, state=NORMAL)
-         self.menu_Filter.entryconfig(2, state=DISABLED)
-         self.menu_Filter.entryconfig(3, state=DISABLED)
-     else:
-         
-         self.menu_Filter.entryconfig(0, state=DISABLED)
-         self.menu_Filter.entryconfig(1, state=DISABLED)
-         self.menu_Filter.entryconfig(2, state=NORMAL)
-         self.menu_Filter.entryconfig(3, state=NORMAL)
+     self.menu_Filter.entryconfig(0, state=inputDevice.speech3DFilterButtonState)
+     self.menu_Filter.entryconfig(1, state=inputDevice.swallow3DFilterButtonState)
+     self.menu_Filter.entryconfig(2, state=inputDevice.speech2DFilterButtonState)
+     self.menu_Filter.entryconfig(3, state=inputDevice.swallow2DFilterButtonState)
+
+                
