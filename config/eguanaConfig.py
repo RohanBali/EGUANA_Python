@@ -12,6 +12,7 @@ class EguanaConfig():
     def __init__(self):
         self.buttonName = ""
         self.setupPlotAndFilterStates()
+        self.dirPath = ""
 
 
     def setupPlotAndFilterStates(self):
@@ -32,5 +33,11 @@ class EguanaConfig():
     def readHeadFile(self,filename):
         return 1
 
-    def isDirectoryValid(self):
+    def isDirectoryValid(self, path):
         return
+
+    def ifTrialExists(self, trialNum):
+        return
+
+    def setDirPath(self,path):
+        self.dirPath = path        

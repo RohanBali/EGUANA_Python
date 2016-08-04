@@ -19,6 +19,7 @@ class TwoDConfig(EguanaConfig):
     def __init__(self):
         EguanaConfig.__init__(self)   
         self.buttonName = "Select Directory for 2D EMA"
+        self.posPath = ""
 
     def isDirectoryValid(self, path):
     	fileFound = 0
@@ -30,6 +31,20 @@ class TwoDConfig(EguanaConfig):
     				break
     	return fileFound
 
+    def ifTrialExists(self, trialNum):
+    	trialFound = 0
+    	
+    	for trial in os.listdir(self.posPath):
+    		trialName = trial.strip('.pos')
+    		if trialNum == int(trialName):
+    			trialFound = 1
+    			break
+
+    	return trialFound
+
+    def setDirPath(self,path):
+        super(TwoDConfig,self).setDirPath(path)
+        self.posPath = self.dirPath + '/pos'
 
 
 

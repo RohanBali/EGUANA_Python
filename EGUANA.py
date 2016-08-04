@@ -110,6 +110,8 @@ class EguanaGUI(Frame):
         dirStr = filedialog.askdirectory()
         
         if len(dirStr) and inputDevice.isDirectoryValid(dirStr):
+
+            inputDevice.setDirPath(dirStr)
             self.inputDevice = inputDevice
             self.selectMachineFrame.destroy()
 
@@ -231,16 +233,16 @@ class EguanaGUI(Frame):
         trialNum = self.trialEntry.get()
         
         try:
-            trialNum = float(trialNum)
+            trialNum = int(trialNum)
             
-            
-            if trialNum < 16 and trialNum > 0:
+            print(self.inputDevice.ifTrialExists(trialNum))
+            if self.inputDevice.ifTrialExists(trialNum):
                 self.plotFigure(number)
                 return True             
             else:
                 messagebox.showerror(
                     "Trial Number Error",
-                    "The trial number is out of range"
+                    "The trial doesn't exist"
                     )     
                 return False
         except ValueError:
