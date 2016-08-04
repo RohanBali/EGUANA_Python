@@ -13,6 +13,7 @@ Created on Fri Jul 29 09:36:50 2016
 """
 from config.eguanaConfig import EguanaConfig
 import os, os.path
+from tkinter import  DISABLED, NORMAL
 
 class TwoDConfig(EguanaConfig):
     
