@@ -21,6 +21,18 @@ class TwoDConfig(EguanaConfig):
         self.buttonName = "Select Directory for 2D EMA"
         self.posPath = ""
 
+    def setupPlotAndFilterStates(self):
+        self.plot3DKButtonState = 'disabled'
+        self.plot3DDstButtonState = 'disabled'
+        self.plot3DDpButtonState = 'disabled'
+        self.plot2DKButtonState = 'normal'
+        self.plot2DDstButtonState = 'normal'
+        self.plot2DDpButtonState = 'normal'
+        self.speech3DFilterButtonState = DISABLED
+        self.swallow3DFilterButtonState = DISABLED
+        self.speech2DFilterButtonState = NORMAL
+        self.swallow2DFilterButtonState = NORMAL
+
     def isDirectoryValid(self, path):
     	fileFound = 0
     	if 'pos' in os.listdir(path):
@@ -32,15 +44,15 @@ class TwoDConfig(EguanaConfig):
     	return fileFound
 
     def ifTrialExists(self, trialNum):
-    	trialFound = 0
-    	
-    	for trial in os.listdir(self.posPath):
-    		trialName = trial.strip('.pos')
-    		if trialNum == int(trialName):
-    			trialFound = 1
-    			break
+        trialFound = 0
+        for trial in os.listdir(self.posPath):
+            if trial.endswith('.pos'):
+                trialName = trial.strip('.pos')
+                if trialNum == int(trialName):
+                    trialFound = 1
+                    break
 
-    	return trialFound
+        return trialFound
 
     def setDirPath(self,path):
         super(TwoDConfig,self).setDirPath(path)

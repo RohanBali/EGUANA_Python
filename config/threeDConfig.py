@@ -48,4 +48,21 @@ class ThreeDConfig(EguanaConfig):
                     break
         return fileFound
 
+    def ifTrialExists(self, trialNum):
+        trialFound = 0
+        for trial in os.listdir(self.posPath):
+            if trial.endswith('.pos'):
+                trialName = trial.strip('.pos')
+                if trialNum == int(trialName):
+                    trialFound = 1
+                    break
+
+        return trialFound
+
+
+    def setDirPath(self,path):
+        super(TwoDConfig,self).setDirPath(path)
+        self.posPath = self.dirPath + '/pos'
+
+
         
