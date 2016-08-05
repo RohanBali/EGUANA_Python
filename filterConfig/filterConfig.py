@@ -1,18 +1,14 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 29 11:00:13 2016
-
-@author: rohanbali
-"""
 from tkinter import  DISABLED, NORMAL
+import os, os.path
 
 
-class EguanaConfig():
+class FilterConfig():
 
     def __init__(self):
         self.buttonName = ""
         self.setupPlotAndFilterStates()
         self.dirPath = ""
+        self.allowedFilterList =  []
 
 
     def setupPlotAndFilterStates(self):
@@ -40,4 +36,7 @@ class EguanaConfig():
         return
 
     def setDirPath(self,path):
-        self.dirPath = path        
+        self.dirPath = path   
+
+    def getAllowedFilters(self):
+        return         

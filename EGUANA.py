@@ -24,7 +24,7 @@ from egpopup import FilterPopup
 
 import math
 
-from config.eguanaConfig import EguanaConfig
+from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 
 class EguanaGUI(Frame):
   
@@ -59,12 +59,12 @@ class EguanaGUI(Frame):
         
         self.supportedDevices = []        
         
-        for fileName in [name for name in os.listdir('./config') if os.path.isfile('./config/' + name) and not name == 'eguanaConfig.py' and  name.endswith('.py')]:
+        for fileName in [name for name in os.listdir('./machineConfig') if os.path.isfile('./machineConfig/' + name) and not name == 'eguanaMachineConfig.py' and  name.endswith('.py')]:
             try:
                 components = fileName.split('.')
                 fileName = components[0]
                 className = fileName[0].upper() + fileName[1:]
-                module = __import__("config."+fileName,fromlist=["config."])                        
+                module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
                 classVar = getattr(module,className)
                 self.supportedDevices.append(classVar())
             except:

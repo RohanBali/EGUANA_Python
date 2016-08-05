@@ -11,14 +11,14 @@ Created on Fri Jul 29 09:36:50 2016
 
 @author: rohanbali
 """
-from config.eguanaConfig import EguanaConfig
+from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 import os, os.path
 from tkinter import  DISABLED, NORMAL
 
-class TwoDConfig(EguanaConfig):
+class TwoDConfig(EguanaMachineConfig):
     
     def __init__(self):
-        EguanaConfig.__init__(self)   
+        EguanaMachineConfig.__init__(self)   
         self.buttonName = "Select Directory for 2D EMA"
         self.posPath = ""
 

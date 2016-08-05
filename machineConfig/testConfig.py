@@ -5,12 +5,12 @@ Created on Wed Aug  3 11:01:25 2016
 @author: rohanbali
 """
 
-from config.eguanaConfig import EguanaConfig
+from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 
-class TestConfig(EguanaConfig):
+class TestConfig(EguanaMachineConfig):
     
     def __init__(self):
-        EguanaConfig.__init__(self)   
+        EguanaMachineConfig.__init__(self)   
         self.buttonName = "Select Directory for the test system"
         print("ok")
     

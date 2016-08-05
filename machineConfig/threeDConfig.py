@@ -10,15 +10,16 @@ Created on Fri Jul 29 09:36:50 2016
 #name
 #how to read functions
 
-from config.eguanaConfig import EguanaConfig
+from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 from tkinter import  DISABLED, NORMAL
+import os, os.path
 
-class ThreeDConfig(EguanaConfig):
+class ThreeDConfig(EguanaMachineConfig):
     
     def __init__(self):
-        EguanaConfig.__init__(self)
+        EguanaMachineConfig.__init__(self)
         self.buttonName = "Select Directory for 3D EMA"
-        print("ok")
+        self.getAllowedFilters = ['speech3DFilterConfig.py','swallow3DFilterConfig.py']   
     
     def readHeadFile(self,filename):
         return 1
@@ -64,5 +65,21 @@ class ThreeDConfig(EguanaConfig):
         super(TwoDConfig,self).setDirPath(path)
         self.posPath = self.dirPath + '/pos'
 
+    def getAllowedFilters(self):
+        print([name for name in os.listdir('../filterConfig')])
+        # allowedFilter = []
+        # for fileName in [name for name in os.listdir('./filterConfig') if name in self.getAllowedFilters]:
+        #     try:
+        #         components = fileName.split('.')
+        #         fileName = components[0]
+        #         className = fileName[0].upper() + fileName[1:]
+        #         module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])                        
+        #         classVar = getattr(module,className)
+        #         allowedFilter.append(classVar())
+        #     except:
+        #         pass
+
+
+        return       
 
         
