@@ -6,7 +6,8 @@ Created on Fri Jul 29 11:00:13 2016
 """
 from tkinter import  DISABLED, NORMAL
 import os, os.path
-
+import json
+import sys
 
 class EguanaMachineConfig():
 
@@ -44,5 +45,25 @@ class EguanaMachineConfig():
     def setDirPath(self,path):
         self.dirPath = path   
 
-    def getAllowedFilters(self):
-        return         
+    def getAllowedFilterFunctionsName(self):
+
+        with open('config.json') as data_file:    
+            data = json.load(data_file)
+
+
+        className = self.__class__.__name__
+        fileName = className[0].lower() + className[1:] + '.py'
+
+        filterFunctionNames = []
+
+        for i in data:
+            if i['machineName'] == fileName:
+                filterData = i['filterFunctions']
+                for j in filterData:
+                    filterFunctionNames.append(j['filterApplicationName'])
+
+
+        return filterFunctionNames
+
+    def getAllowedFilterTypesForFilterApplications(self,filterApplication):
+        a = 1

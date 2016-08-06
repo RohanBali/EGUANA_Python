@@ -1,0 +1,56 @@
+[
+  {
+    "machineName": "threeDConfig.py",
+    "filterFunctions":[
+      {
+      "filterApplicationName":"speech3DFilterConfig.py",
+      "filterTypes":[
+        {
+          "filterName":"rafael"
+        },
+        {
+          "filterName":"westburry"
+        }
+        ]
+      },
+      {
+      "filterApplicationName":"swalow3DFilterConfig.py",
+      "filterTypes":[
+        {
+          "filterName":"rafael"
+        },
+        {
+          "filterName":"westburry"
+        }
+        ]
+      }      
+    ]
+  },
+  {
+    "machineName": "twoDConfig.py",
+    "filterFunctions":[
+      {
+      "filterApplicationName":"speech2DFilterConfig.py",
+      "filterTypes":[
+        {
+          "filterName":"rafael"
+        },
+        {
+          "filterName":"westburry"
+        }
+        ]
+      },
+      {
+      "filterApplicationName":"swalow2DFilterConfig.py",
+      "filterTypes":[
+        {
+          "filterName":"rafael"
+        },
+        {
+          "filterName":"westburry"
+        }
+        ]
+      }      
+    ]
+  } 
+]

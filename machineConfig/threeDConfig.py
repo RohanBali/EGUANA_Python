@@ -64,22 +64,6 @@ class ThreeDConfig(EguanaMachineConfig):
     def setDirPath(self,path):
         super(TwoDConfig,self).setDirPath(path)
         self.posPath = self.dirPath + '/pos'
-
-    def getAllowedFilters(self):
-        print([name for name in os.listdir('../filterConfig')])
-        # allowedFilter = []
-        # for fileName in [name for name in os.listdir('./filterConfig') if name in self.getAllowedFilters]:
-        #     try:
-        #         components = fileName.split('.')
-        #         fileName = components[0]
-        #         className = fileName[0].upper() + fileName[1:]
-        #         module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])                        
-        #         classVar = getattr(module,className)
-        #         allowedFilter.append(classVar())
-        #     except:
-        #         pass
-
-
-        return       
+ 
 
         
