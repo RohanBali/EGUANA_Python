@@ -14,7 +14,7 @@
         ]
       },
       {
-      "filterApplicationName":"swalow3DFilterConfig.py",
+      "filterApplicationName":"swallow3DFilterConfig.py",
       "filterTypes":[
         {
           "filterName":"rafael"
@@ -41,7 +41,7 @@
         ]
       },
       {
-      "filterApplicationName":"swalow2DFilterConfig.py",
+      "filterApplicationName":"swallow2DFilterConfig.py",
       "filterTypes":[
         {
           "filterName":"rafael"

@@ -5,14 +5,13 @@ Created on Tue Jul 26 15:34:22 2016
 @author: rohanbali
 """
 
-from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED
+from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W
 
 class FilterPopup(Toplevel):
     
-     def __init__(self, parent,inType):
+     def __init__(self,parent,inType):
     
         Toplevel.__init__(self)   
-        self.delegate = parent
         self.inputDevice = inType
         
         self.transient(parent)
@@ -22,16 +21,21 @@ class FilterPopup(Toplevel):
         self.geometry('%dx%d+%d+%d' % (sw/4, sh/4, sw/2-sw/8, sh/2-sh/8))
         self.grab_set()
         self.title("Select Filter")
+        self.supportedFilters = []
+                
+        filterFunctionFiles = self.inputDevice.getAllowedFilterFunctionsName()
+        for i in range(len(filterFunctionFiles)):
+                fileName = filterFunctionFiles[i]
+                components = fileName.split('.')
+                fileName = components[0]
+                className = fileName[0].upper() + fileName[1:]
+                module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])                        
+                classVar = getattr(module,className)
+                classObject = classVar()
+                self.supportedFilters.append(classObject)
+                b = Button(self,text=classObject.name,relief=RAISED,command=classObject.filterButtonPressed)
+                b.grid(row=i,column=1, sticky=N+S+E+W,padx=2,pady =2)
+                self.rowconfigure(i,weight=1)
 
-        if self.inputDevice.speech3DFilterButtonState == NORMAL : 
-            first = Button(self,text='Speech 3D',relief=RAISED,command=self.delegate.speech3DButtonPressed)
-            first.pack(side=TOP,expand=1,fill = X,padx=2,pady =2)
-        if self.inputDevice.swallow3DFilterButtonState == NORMAL : 
-            third = Button(self,text='Sawllow 3D',relief=RAISED,command=self.delegate.swallow3DButtonPressed)
-            third.pack(side=TOP,expand=1,fill = X,padx=2,pady =2)
-        if self.inputDevice.speech2DFilterButtonState == NORMAL : 
-            second = Button(self,text='Speech 2D',relief=RAISED,command=self.delegate.speech2DButtonPressed)
-            second.pack(side=TOP,expand=1,fill = X,padx=2,pady =2)
-        if self.inputDevice.swallow2DFilterButtonState == NORMAL : 
-            fourth = Button(self,text='Swallow 2D',relief=RAISED,command=self.delegate.swallow2DButtonPressed)
-            fourth.pack(side=TOP,expand=1,fill = X,padx=2,pady =2)
+
+        self.columnconfigure(1,weight=1)

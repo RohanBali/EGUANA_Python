@@ -62,7 +62,7 @@ class ThreeDConfig(EguanaMachineConfig):
 
 
     def setDirPath(self,path):
-        super(TwoDConfig,self).setDirPath(path)
+        super(ThreeDConfig,self).setDirPath(path)
         self.posPath = self.dirPath + '/pos'
  
 
