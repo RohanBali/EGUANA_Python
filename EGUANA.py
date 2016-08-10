@@ -33,6 +33,8 @@ class EguanaGUI(Frame):
          
         self.parent = parent
         self.initUI()
+        self.inputDevice = None
+        self.filterType = None
 
         
     def initUI(self):
@@ -103,7 +105,6 @@ class EguanaGUI(Frame):
         for i in range(numColumns):
             self.selectMachineFrame.columnconfigure(i,weight=1)
             
-
 
     def machineButtonPressed(self,inputDevice):
 

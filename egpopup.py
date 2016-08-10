@@ -54,15 +54,17 @@ class FilterTypePopup(Toplevel):
         headFiltersList = self.filterFunction.headFilters
         jawFiltersList = self.filterFunction.jawFilters
 
-        for i in range(len(headFiltersList)):
-                classObject = headFiltersList[i]
-                b = Button(self,text=classObject,relief=RAISED,command=None)
-                b.grid(row=i,column=1, sticky=N+S+E+W,padx=2,pady =2)
-                self.rowconfigure(i,weight=1)
+
 
         for i in range(len(headFiltersList)):
                 classObject = headFiltersList[i]
-                b = Button(self,text=classObject,relief=RAISED,command=None)
+                b = Button(self,text=classObject.name,relief=RAISED,command=None)
+                b.grid(row=i,column=1, sticky=N+S+E+W,padx=2,pady =2)
+                self.rowconfigure(i,weight=1)
+
+        for i in range(len(jawFiltersList)):
+                classObject = jawFiltersList[i]
+                b = Button(self,text=classObject.name,relief=RAISED,command=None)
                 b.grid(row=i,column=2, sticky=N+S+E+W,padx=2,pady =2)
 
         self.columnconfigure(1,weight=1)

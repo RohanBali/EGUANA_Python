@@ -5,8 +5,8 @@ import json
 class EguanaFilterConfig():
 
     def __init__(self):
-    	self.name = ""
-    	self.machineType = None
+        self.name = ""
+        self.machineType = None
         self.headFilters = []
         self.jawFilters = []
 
@@ -38,5 +38,32 @@ class EguanaFilterConfig():
                 filterData = i['filterFunctions']
                 for j in filterData:
                         if j["filterApplicationName"] == fileName:
-                            self.headFilters = j["filterTypes"]["headFilters"]
-                            self.jawFilters = j["filterTypes"]["jawFilters"]
+                            self.headFilters =  self.getFilterTypeObjectsFromTypeNameArray(j["filterTypes"]["headFilters"],'Head')
+                            self.jawFilters = self.getFilterTypeObjectsFromTypeNameArray(j["filterTypes"]["jawFilters"],'Jaw')
+
+
+    def getFilterTypeObjectsFromTypeNameArray(self,filterTypeNameArray,filterType):
+
+        filterTypeObjectArray = []
+
+        if filterType == 'Jaw':
+            for filterTypeName in filterTypeNameArray:
+                components = filterTypeName.split('.')
+                fileName = components[0]
+                className = fileName[0].upper() + fileName[1:]
+                module = __import__("filterTypesConfig.jawFilters."+fileName,fromlist=["filterTypesConfig.jawFilters."])                        
+                classVar = getattr(module,className)
+                classObject = classVar()
+                filterTypeObjectArray.append(classObject)
+        else:
+            for filterTypeName in filterTypeNameArray:
+                components = filterTypeName.split('.')
+                fileName = components[0]
+                className = fileName[0].upper() + fileName[1:]
+                module = __import__("filterTypesConfig.headFilters."+fileName,fromlist=["filterTypesConfig.headFilters."])                        
+                classVar = getattr(module,className)
+                classObject = classVar()
+                filterTypeObjectArray.append(classObject)
+
+        return filterTypeObjectArray
+

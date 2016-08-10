@@ -5,15 +5,15 @@
       {
       "filterApplicationName":"speech3DFilterConfig.py",
       "filterTypes":{
-        "headFilters":["cKroosFilter.py","posFilter.py","rHenriques.py","No Correction"],
-        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter","No Filter"]
+        "headFilters":["cKroosFilter.py","posFilter.py","rHenriquesFilter.py"],
+        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter"]
       }
       },
       {
       "filterApplicationName":"swallow3DFilterConfig.py",
       "filterTypes":{
-        "headFilters":["cKroosFilter.py","posFilter.py","rHenriques.py","No Correction"],
-        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter","No Filter"]
+        "headFilters":["cKroosFilter.py","posFilter.py","rHenriquesFilter.py"],
+        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter"]
       }
       }
     ]
@@ -24,15 +24,15 @@
       {
       "filterApplicationName":"speech2DFilterConfig.py",
       "filterTypes":{
-        "headFilters":["cKroosFilter.py","posFilter.py","rHenriques.py","No Correction"],
-        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter","No Filter"]
+        "headFilters":["cKroosFilter.py","posFilter.py","rHenriquesFilter.py"],
+        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter"]
       }
       },
       {
       "filterApplicationName":"swallow2DFilterConfig.py",
       "filterTypes":{
-        "headFilters":["cKroosFilter.py","posFilter.py","rHenriques.py","No Correction"],
-        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter","No Filter"]
+        "headFilters":["cKroosFilter.py","posFilter.py","rHenriquesFilter.py"],
+        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter"]
       }
       }      
     ]
