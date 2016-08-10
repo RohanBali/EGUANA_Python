@@ -20,7 +20,7 @@ from tkinter import Tk, RIGHT, RAISED, ttk, Frame, Button, Label, Text, TOP,RIDG
 
 from egdialogs import CoilNumDialog
 from egmenu import EguanaMenu
-from egpopup import FilterPopup
+from egpopup import FilterFunctionPopup
 
 import math
 
@@ -126,40 +126,44 @@ class EguanaGUI(Frame):
             self.selectPlotFrame = Frame(self.frame, relief=FLAT,bg='#FADC46')
             self.selectPlotFrame.pack(fill=BOTH,expand=True)
             self.selectPlotFrame.rowconfigure(0,weight=1)
-            self.selectPlotFrame.rowconfigure(1,weight=1)
+            self.selectPlotFrame.rowconfigure(1,weight=2)
             self.selectPlotFrame.columnconfigure(0,weight=1)
 
             self.infoFrame = Frame(self.selectPlotFrame, relief=FLAT, bg='#FADC46')
             self.infoFrame.grid(row=0,column=0, sticky=N+S+E+W,padx=2,pady =2)
                
-        
+            
+            self.machineNameLabel = Label(self.infoFrame, text=inputDevice.name,relief=FLAT)
+            self.machineNameLabel.grid(row=0,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
+
             self.directoryLabel = Label(self.infoFrame, text="No project currently selected",relief=FLAT)
-            self.directoryLabel.grid(row=0,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
+            self.directoryLabel.grid(row=1,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
             self.directoryLabel.config(text=dirStr)
             
         
             self.outputDirButton = Button(self.infoFrame,text="No output directory selected. Click to select an output directory ",relief=RAISED,fg='red',command=self.askOutputDirectory)
-            self.outputDirButton.grid(row=1,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
+            self.outputDirButton.grid(row=2,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
             
             
             self.filterButton = Button(self.infoFrame,text="No filter selected. Click to select a filter",relief=RAISED,fg='red',command=self.selectFilter)
-            self.filterButton.grid(row=2,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
+            self.filterButton.grid(row=3,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
            
            
             self.trialLabel = Label(self.infoFrame,text="Trial Number",relief=FLAT,justify=RIGHT,anchor=E)
-            self.trialLabel.grid(row=3,column=0, sticky=N+S+E+W,padx=2,pady =2)
+            self.trialLabel.grid(row=4,column=0, sticky=N+S+E+W,padx=2,pady =2)
 
 
             vcmd = (self.master.register(self.validate),'%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
             self.trialEntry = Entry(self.infoFrame,validate = 'key', validatecommand = vcmd)
-            self.trialEntry.grid(row=3,column=1, sticky=N+S+E+W,padx=2,pady =2)
+            self.trialEntry.grid(row=4,column=1, sticky=N+S+E+W,padx=2,pady =2)
 
             self.infoFrame.columnconfigure(0, weight=1)
             self.infoFrame.columnconfigure(1, weight=1)
             self.infoFrame.rowconfigure(0, weight=1)
-            self.infoFrame.rowconfigure(1, weight=1)
-            self.infoFrame.rowconfigure(2, weight=1)
-            self.infoFrame.rowconfigure(3, weight=1)
+            self.infoFrame.rowconfigure(1, weight=10)
+            self.infoFrame.rowconfigure(2, weight=10)
+            self.infoFrame.rowconfigure(3, weight=10)
+            self.infoFrame.rowconfigure(4, weight=10)
 
             self.showPlotTools()
 
@@ -258,7 +262,7 @@ class EguanaGUI(Frame):
             print(m.getValues())
         
     def selectFilter(self):        
-        self.top = FilterPopup(self,self.inputDevice);
+        self.top = FilterFunctionPopup(self,self.inputDevice);
 
     def speech3DButtonPressed(self):
         self.menubar.filterSelected(0)
@@ -319,11 +323,10 @@ class EguanaGUI(Frame):
                 self.photoName = "eguana2.gif"
                 self.changeImage()
                 
-                
 def main():
     
     global app
-    global root 
+    global root
     root = Tk()
 
     sw = root.winfo_screenwidth()

@@ -12,7 +12,7 @@ class TestConfig(EguanaMachineConfig):
     def __init__(self):
         EguanaMachineConfig.__init__(self)   
         self.buttonName = "Select Directory for the test system"
-        print("ok")
+        self.name = "Test"
     
     def readHeadFile(self,filename):
         return 1

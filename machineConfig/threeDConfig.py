@@ -20,7 +20,8 @@ class ThreeDConfig(EguanaMachineConfig):
         EguanaMachineConfig.__init__(self)
         self.buttonName = "Select Directory for 3D EMA"
         self.getAllowedFilters = ['speech3DFilterConfig.py','swallow3DFilterConfig.py']   
-    
+        self.name = "3D EMA"
+        
     def readHeadFile(self,filename):
         return 1
         
@@ -34,10 +35,7 @@ class ThreeDConfig(EguanaMachineConfig):
         self.plot2DKButtonState = 'disabled'
         self.plot2DDstButtonState = 'disabled'
         self.plot2DDpButtonState = 'disabled'
-        self.speech3DFilterButtonState = NORMAL
-        self.swallow3DFilterButtonState = NORMAL
-        self.speech2DFilterButtonState = DISABLED
-        self.swallow2DFilterButtonState = DISABLED
+
     
     def isDirectoryValid(self, path):
         fileFound = 0

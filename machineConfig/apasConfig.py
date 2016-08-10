@@ -13,6 +13,7 @@ class ApasConfig(EguanaMachineConfig):
         EguanaMachineConfig.__init__(self)   
         self.buttonName = "Select Directory for the APAS system"
         print("ok")
+        self.name = "APAS"
     
     def readHeadFile(self,filename):
         return 1

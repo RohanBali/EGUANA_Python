@@ -4,26 +4,18 @@
     "filterFunctions":[
       {
       "filterApplicationName":"speech3DFilterConfig.py",
-      "filterTypes":[
-        {
-          "filterName":"rafael"
-        },
-        {
-          "filterName":"westburry"
-        }
-        ]
+      "filterTypes":{
+        "headFilters":["cKroosFilter.py","posFilter.py","rHenriques.py","No Correction"],
+        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter","No Filter"]
+      }
       },
       {
       "filterApplicationName":"swallow3DFilterConfig.py",
-      "filterTypes":[
-        {
-          "filterName":"rafael"
-        },
-        {
-          "filterName":"westburry"
-        }
-        ]
-      }      
+      "filterTypes":{
+        "headFilters":["cKroosFilter.py","posFilter.py","rHenriques.py","No Correction"],
+        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter","No Filter"]
+      }
+      }
     ]
   },
   {
@@ -31,25 +23,17 @@
     "filterFunctions":[
       {
       "filterApplicationName":"speech2DFilterConfig.py",
-      "filterTypes":[
-        {
-          "filterName":"rafael"
-        },
-        {
-          "filterName":"westburry"
-        }
-        ]
+      "filterTypes":{
+        "headFilters":["cKroosFilter.py","posFilter.py","rHenriques.py","No Correction"],
+        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter","No Filter"]
+      }
       },
       {
       "filterApplicationName":"swallow2DFilterConfig.py",
-      "filterTypes":[
-        {
-          "filterName":"rafael"
-        },
-        {
-          "filterName":"westburry"
-        }
-        ]
+      "filterTypes":{
+        "headFilters":["cKroosFilter.py","posFilter.py","rHenriques.py","No Correction"],
+        "jawFilters":["joanaFilter.py","goldFilter.py","erFilter.py","ssFilter","No Filter"]
+      }
       }      
     ]
   } 

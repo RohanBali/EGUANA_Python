@@ -14,8 +14,9 @@ class EguanaMachineConfig():
     def __init__(self):
         self.buttonName = ""
         self.setupPlotAndFilterStates()
+        self.setupAllowedFilterFunctions()
         self.dirPath = ""
-        self.allowedFilterList =  []
+        self.name = ""
 
 
     def setupPlotAndFilterStates(self):
@@ -25,10 +26,6 @@ class EguanaMachineConfig():
         self.plot2DKButtonState = 'normal'
         self.plot2DDstButtonState = 'normal'
         self.plot2DDpButtonState = 'normal'
-        self.speech3DFilterButtonState = NORMAL
-        self.swallow3DFilterButtonState = NORMAL
-        self.speech2DFilterButtonState = NORMAL
-        self.swallow2DFilterButtonState = NORMAL
                 
     def whatsMyName(self):
         print("EguanaMachineConfig")
@@ -45,25 +42,33 @@ class EguanaMachineConfig():
     def setDirPath(self,path):
         self.dirPath = path   
 
-    def getAllowedFilterFunctionsName(self):
+    def setupAllowedFilterFunctions(self):
+
+        self.allowedFilterFunctions = []
 
         with open('config.json') as data_file:    
             data = json.load(data_file)
 
 
         className = self.__class__.__name__
+        print(className)
         fileName = className[0].lower() + className[1:] + '.py'
 
-        filterFunctionNames = []
 
         for i in data:
             if i['machineName'] == fileName:
                 filterData = i['filterFunctions']
                 for j in filterData:
-                    filterFunctionNames.append(j['filterApplicationName'])
+                    filterFunctionName = j['filterApplicationName']
+                    self.allowedFilterFunctions.append(self.getFilterObjectFromFunctionName(filterFunctionName))
 
 
-        return filterFunctionNames
-
-    def getAllowedFilterTypesForFilterApplications(self,filterApplication):
-        a = 1
+    def getFilterObjectFromFunctionName(self,filterFunctionName):
+        components = filterFunctionName.split('.')
+        fileName = components[0]
+        className = fileName[0].upper() + fileName[1:]
+        module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])                        
+        classVar = getattr(module,className)
+        classObject = classVar()
+        classObject.setupMachineType(self)
+        return classObject

@@ -14,7 +14,8 @@ class EguanaMenu(Menu):
         
         self.delegate = delegate
         self.initUI()
-        
+        self.inputDevice = None
+        self.toggleBooleanButtonStates = []
  def initUI(self):
  
     self.menu_file = Menu(self)
@@ -24,24 +25,6 @@ class EguanaMenu(Menu):
     self.menu_file.add_command(label='Exit',command=self.delegate.quit)
     
     self.add_cascade(menu=self.menu_file, label='File')
-
-    self.menu_Filter = Menu(self)
-    
-    self.b0 = BooleanVar()
-    self.b1 = BooleanVar()
-    self.b2 = BooleanVar()
-    self.b3 = BooleanVar()
-
-    self.menu_Filter.add_checkbutton(label="Speech 3D", onvalue=1, offvalue=0, variable=self.b0, command=self.delegate.speech3DButtonPressed)
-    self.menu_Filter.add_checkbutton(label='Swallow 3D',onvalue=1, offvalue=0, variable=self.b2,command=self.delegate.swallow3DButtonPressed)
-    self.menu_Filter.add_checkbutton(label='Speech 2D',onvalue=1, offvalue=0, variable=self.b1, command=self.delegate.speech2DButtonPressed)    
-    self.menu_Filter.add_checkbutton(label='Swallow 2D',onvalue=1, offvalue=0, variable=self.b3,command=self.delegate.swallow2DButtonPressed)
-
-    self.add_cascade(menu=self.menu_Filter, label='Filter')
-    
-    self.entryconfigure('Filter', state = 'disabled')
-    
-    
     
  def filterSelected(self,buttonIndex):
      for i in range(4):
@@ -51,10 +34,17 @@ class EguanaMenu(Menu):
         
         
  def inputSelected(self,inputDevice):
-     self.entryconfigure('Filter', state = 'active')
-     self.menu_Filter.entryconfig(0, state=inputDevice.speech3DFilterButtonState)
-     self.menu_Filter.entryconfig(1, state=inputDevice.swallow3DFilterButtonState)
-     self.menu_Filter.entryconfig(2, state=inputDevice.speech2DFilterButtonState)
-     self.menu_Filter.entryconfig(3, state=inputDevice.swallow2DFilterButtonState)
+    self.inputDevice = inputDevice
+    filterFunctionObjects = self.inputDevice.allowedFilterFunctions
 
+    menu_Filter = Menu(self)
+
+    for i in range(len(filterFunctionObjects)):
+        classObject = filterFunctionObjects[i]
+        buttonBool = BooleanVar()
+        self.toggleBooleanButtonStates.append(buttonBool)
+        menu_Filter.add_checkbutton(label=classObject.name, onvalue=1, offvalue=0, variable=buttonBool, command=classObject.filterButtonPressed)
+
+
+    self.add_cascade(menu=menu_Filter, label='Filter')
                 

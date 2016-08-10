@@ -21,6 +21,7 @@ class TwoDConfig(EguanaMachineConfig):
         EguanaMachineConfig.__init__(self)   
         self.buttonName = "Select Directory for 2D EMA"
         self.posPath = ""
+        self.name = "2D EMA"
 
     def setupPlotAndFilterStates(self):
         self.plot3DKButtonState = 'disabled'
@@ -29,10 +30,6 @@ class TwoDConfig(EguanaMachineConfig):
         self.plot2DKButtonState = 'normal'
         self.plot2DDstButtonState = 'normal'
         self.plot2DDpButtonState = 'normal'
-        self.speech3DFilterButtonState = DISABLED
-        self.swallow3DFilterButtonState = DISABLED
-        self.speech2DFilterButtonState = NORMAL
-        self.swallow2DFilterButtonState = NORMAL
 
     def isDirectoryValid(self, path):
     	fileFound = 0
