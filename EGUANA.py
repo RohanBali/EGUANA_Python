@@ -21,6 +21,7 @@ from tkinter import Tk, RIGHT, RAISED, ttk, Frame, Button, Label, Text, TOP,RIDG
 from egdialogs import CoilNumDialog
 from egmenu import EguanaMenu
 from egpopup import FilterFunctionPopup
+from eguanaModel import EguanaModel
 
 import math
 
@@ -33,8 +34,6 @@ class EguanaGUI(Frame):
          
         self.parent = parent
         self.initUI()
-        self.inputDevice = None
-        self.filterType = None
 
         
     def initUI(self):
@@ -113,10 +112,11 @@ class EguanaGUI(Frame):
         if len(dirStr) and inputDevice.isDirectoryValid(dirStr):
 
             inputDevice.setDirPath(dirStr)
-            self.inputDevice = inputDevice
+            EguanaModel().machine = inputDevice
+
             self.selectMachineFrame.destroy()
 
-            self.menubar.inputSelected(self.inputDevice)
+            self.menubar.inputSelected()
 
             self.photo_label.destroy()
 
@@ -220,12 +220,12 @@ class EguanaGUI(Frame):
         
         
     
-        b1.config(state=self.inputDevice.plot3DKButtonState)
-        b2.config(state=self.inputDevice.plot3DDstButtonState)
-        b3.config(state=self.inputDevice.plot3DDpButtonState)
-        b4.config(state=self.inputDevice.plot2DKButtonState)
-        b5.config(state=self.inputDevice.plot2DDstButtonState)
-        b6.config(state=self.inputDevice.plot2DDpButtonState)
+        b1.config(state=EguanaModel().machine.plot3DKButtonState)
+        b2.config(state=EguanaModel().machine.plot3DDstButtonState)
+        b3.config(state=EguanaModel().machine.plot3DDpButtonState)
+        b4.config(state=EguanaModel().machine.plot2DKButtonState)
+        b5.config(state=EguanaModel().machine.plot2DDstButtonState)
+        b6.config(state=EguanaModel().machine.plot2DDpButtonState)
 
         f2.columnconfigure(0, weight=1)
         f2.columnconfigure(1, weight=1)
@@ -240,8 +240,8 @@ class EguanaGUI(Frame):
         try:
             trialNum = int(trialNum)
             
-            print(self.inputDevice.ifTrialExists(trialNum))
-            if self.inputDevice.ifTrialExists(trialNum):
+            print(EguanaModel().machine.ifTrialExists(trialNum))
+            if EguanaModel().machine.ifTrialExists(trialNum):
                 self.plotFigure(number)
                 return True             
             else:
@@ -263,7 +263,7 @@ class EguanaGUI(Frame):
             print(m.getValues())
         
     def selectFilter(self):        
-        self.top = FilterFunctionPopup(self,self.inputDevice);
+        self.top = FilterFunctionPopup(self);
 
     def speech3DButtonPressed(self):
         self.menubar.filterSelected(0)

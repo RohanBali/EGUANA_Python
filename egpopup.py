@@ -6,13 +6,13 @@ Created on Tue Jul 26 15:34:22 2016
 """
 
 from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W
+from eguanaModel import EguanaModel
 
 class FilterFunctionPopup(Toplevel):
     
-    def __init__(self,parent,inType):
+    def __init__(self,parent):
     
         Toplevel.__init__(self)   
-        self.inputDevice = inType
         self.parent  = parent
         self.transient(parent)
         self.focus()
@@ -22,7 +22,7 @@ class FilterFunctionPopup(Toplevel):
         self.grab_set()
         self.title("Select Filter Function")
                 
-        filterFunctionObjects = self.inputDevice.allowedFilterFunctions
+        filterFunctionObjects = EguanaModel().getAllowedFilterFunctions()
 
         for i in range(len(filterFunctionObjects)):
                 classObject = filterFunctionObjects[i]
@@ -34,6 +34,7 @@ class FilterFunctionPopup(Toplevel):
 
     def filterButtonPressed(self,filterFunction):
         self.destroy()
+        EguanaModel().filterFunction = filterFunction
         FilterTypePopup(self.parent,filterFunction)
 
 
@@ -51,8 +52,8 @@ class FilterTypePopup(Toplevel):
         self.grab_set()
         self.title("Select Filter")
                 
-        headFiltersList = self.filterFunction.headFilters
-        jawFiltersList = self.filterFunction.jawFilters
+        headFiltersList = EguanaModel().getAllowedHeadFilterTypes()
+        jawFiltersList = EguanaModel().getAllowedJawFilterTypes()
 
 
 

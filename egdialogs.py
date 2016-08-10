@@ -6,6 +6,7 @@ Created on Sun Jul 24 23:24:40 2016
 """
 
 from tkinter import Tk,simpledialog, Label, Entry, messagebox
+from eguanaModel import EguanaModel
 
 class CoilNumDialog(simpledialog.Dialog):
 

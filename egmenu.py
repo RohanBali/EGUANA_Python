@@ -6,6 +6,7 @@ Created on Tue Jul 26 10:15:51 2016
 """
 from tkinter import Menu, DISABLED, NORMAL
 from tkinter import BooleanVar
+from eguanaModel import EguanaModel
 
 class EguanaMenu(Menu):
     
@@ -14,7 +15,6 @@ class EguanaMenu(Menu):
         
         self.delegate = delegate
         self.initUI()
-        self.inputDevice = None
         self.toggleBooleanButtonStates = []
  def initUI(self):
  
@@ -33,9 +33,8 @@ class EguanaMenu(Menu):
              b.set(False)
         
         
- def inputSelected(self,inputDevice):
-    self.inputDevice = inputDevice
-    filterFunctionObjects = self.inputDevice.allowedFilterFunctions
+ def inputSelected(self):
+    filterFunctionObjects = EguanaModel().getAllowedFilterFunctions()
 
     menu_Filter = Menu(self)
 
