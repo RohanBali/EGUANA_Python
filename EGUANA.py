@@ -15,12 +15,15 @@ Website: www.zetcode.com
 """
 import os, os.path
 
+from tkinter import *
 from tkinter import filedialog, FLAT, PhotoImage, Menu, CENTER, S, NW,NE, SW,W,SE, E, Toplevel, Entry, messagebox, simpledialog
-from tkinter import Tk, RIGHT, RAISED, ttk, Frame, Button, Label, Text, TOP,RIDGE, BOTH,BOTTOM, Y,X,W, N, LEFT
+from tkinter import Tk, RIGHT, RAISED, ttk, Frame, Button, Label, Text, TOP,RIDGE, BOTH,BOTTOM, Y,X,W, N, LEFT, SUNKEN
 
 from egdialogs import CoilNumDialog
 from egmenu import EguanaMenu
 from egpopup import FilterFunctionPopup
+from egpopup import FilterTypePopup
+
 from eguanaModel import EguanaModel
 
 import math
@@ -76,6 +79,7 @@ class EguanaGUI(Frame):
         self.setupSelectMachineButtons()
         
     def setupSelectMachineButtons(self):
+
         numDevices = len(self.supportedDevices)
         numColumns = 3
         numRows = math.ceil((numDevices+1)/3)
@@ -187,10 +191,7 @@ class EguanaGUI(Frame):
         dirStr = filedialog.askdirectory()
         if len(dirStr):
             dirStr = 'Output Path : '+dirStr
-            self.outputDirButton.destroy()
-            self.outputDirLabel = Label(self.infoFrame, relief=FLAT)
-            self.outputDirLabel.grid(row=1,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
-            self.outputDirLabel.config(text=dirStr)
+            self.outputDirButton.config(text=dirStr)
 
             
 
@@ -263,47 +264,17 @@ class EguanaGUI(Frame):
             print(m.getValues())
         
     def selectFilter(self):        
-        self.top = FilterFunctionPopup(self);
+        ffPopup = FilterFunctionPopup(self)
+        if ffPopup.selectedFilter is not None:
+            EguanaModel().filterFunction = ffPopup.selectedFilter
+            ftPopup = FilterTypePopup(self,ffPopup.selectedFilter)
+            if (ftPopup.selectedHeadFilterType is not None) and (ftPopup.selectedHeadFilterType is not None):
+                EguanaModel().filterTypeHead = ftPopup.selectedHeadFilterType
+                EguanaModel().filterTypeJaw = ftPopup.selectedJawFilterType
+                EguanaModel().filterFunction = ffPopup.selectedFilter
+                buttonText = '{} - Jaw Filter : {} - Head Filter {}'.format(ffPopup.selectedFilter.name,ftPopup.selectedJawFilterType.name, ftPopup.selectedHeadFilterType.name)
+                self.filterButton.config(text=buttonText)
 
-    def speech3DButtonPressed(self):
-        self.menubar.filterSelected(0)
-        self.top.destroy()
-        if hasattr(self, 'filterLabel'):
-            self.filterLabel.config(text="Filter : speech3D")
-        else:
-            self.filterLabel = Label(self.infoFrame, text="Filter : speech3D",relief=FLAT)
-            self.filterLabel.grid(row=2,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
-            self.filterButton.destroy()
-    
-    def speech2DButtonPressed(self):
-        self.menubar.filterSelected(1)
-        self.top.destroy()
-        if hasattr(self, 'filterLabel'):
-            self.filterLabel.config(text="Filter : speech2D")
-        else:
-            self.filterLabel = Label(self.infoFrame, text="Filter : speech2D ",relief=FLAT)
-            self.filterLabel.grid(row=2,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
-            self.filterButton.destroy()
-    
-    def swallow3DButtonPressed(self):
-        self.menubar.filterSelected(2)
-        self.top.destroy()
-        if hasattr(self, 'filterLabel'):
-            self.filterLabel.config(text="Filter : swallow3D")
-        else:
-            self.filterLabel = Label(self.infoFrame, text="Filter : swallow3D ",relief=FLAT)
-            self.filterLabel.grid(row=2,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
-            self.filterButton.destroy()
-    
-    def swallow2DButtonPressed(self):
-        self.menubar.filterSelected(3)
-        self.top.destroy()
-        if hasattr(self, 'filterLabel'):
-            self.filterLabel.config(text="Filter : swallow2D")
-        else:
-            self.filterLabel = Label(self.infoFrame, text="Filter : swallow2D ",relief=FLAT)
-            self.filterLabel.grid(row=2,column=0,columnspan=2, sticky=N+S+E+W,padx=2,pady =2)
-            self.filterButton.destroy()
 
     def changeImage(self):
         self.photo = PhotoImage(file=self.photoName)

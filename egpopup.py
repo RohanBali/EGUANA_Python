@@ -5,14 +5,16 @@ Created on Tue Jul 26 15:34:22 2016
 @author: rohanbali
 """
 
-from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W
+from tkinter import *
+from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W, SUNKEN, Label
 from eguanaModel import EguanaModel
 
 class FilterFunctionPopup(Toplevel):
     
     def __init__(self,parent):
     
-        Toplevel.__init__(self)   
+        Toplevel.__init__(self) 
+        self.selectedFilter = None  
         self.parent  = parent
         self.transient(parent)
         self.focus()
@@ -31,11 +33,13 @@ class FilterFunctionPopup(Toplevel):
                 self.rowconfigure(i,weight=1)
 
         self.columnconfigure(1,weight=1)
+        self.wait_window(self)
+
 
     def filterButtonPressed(self,filterFunction):
+        self.selectedFilter = filterFunction
         self.destroy()
-        EguanaModel().filterFunction = filterFunction
-        FilterTypePopup(self.parent,filterFunction)
+        # FilterTypePopup(self.parent,filterFunction)
 
 
 class FilterTypePopup(Toplevel):
@@ -44,6 +48,10 @@ class FilterTypePopup(Toplevel):
     
         Toplevel.__init__(self)   
         self.filterFunction = filterFunction
+        self.selectedJawFilterType = None
+        self.selectedHeadFilterType = None
+
+
         self.transient(parent)
         self.focus()
         sw = parent.winfo_screenwidth()
@@ -57,16 +65,68 @@ class FilterTypePopup(Toplevel):
 
 
 
+        self.jawButtonList = []
+        self.headButtonList = []
+
+
+        headNameLabel = Label(self, text="Head Filter",relief=FLAT)
+        headNameLabel.grid(row=0,column=0, sticky=N+S+E+W,padx=2,pady =2)
+
+        jawNameFilter = Label(self, text="Jaw Filter",relief=FLAT)
+        jawNameFilter.grid(row=0,column=1, sticky=N+S+E+W,padx=2,pady =2)
+
+
         for i in range(len(headFiltersList)):
                 classObject = headFiltersList[i]
-                b = Button(self,text=classObject.name,relief=RAISED,command=None)
-                b.grid(row=i,column=1, sticky=N+S+E+W,padx=2,pady =2)
-                self.rowconfigure(i,weight=1)
+                b = Button(self,text=classObject.name,relief=RAISED,command=lambda filterTypeObject = classObject, index = i : self.filterTypeButtonPressed(filterTypeObject,index))
+                b.grid(row=i+1,column=0, sticky=N+S+E+W,padx=2,pady =2)
+                self.headButtonList.append(b)
 
         for i in range(len(jawFiltersList)):
                 classObject = jawFiltersList[i]
-                b = Button(self,text=classObject.name,relief=RAISED,command=None)
-                b.grid(row=i,column=2, sticky=N+S+E+W,padx=2,pady =2)
+                b = Button(self,text=classObject.name,relief=RAISED,command=lambda classObject = classObject, i = i  : self.filterTypeButtonPressed(classObject,i))
+                b.grid(row=i+1,column=1, sticky=N+S+E+W,padx=2,pady =2)
+                self.jawButtonList.append(b)
+                
+        for i in range(max(len(jawFiltersList)+1,len(headFiltersList)+1)):
+            self.rowconfigure(i,weight=1)        
 
+        self.columnconfigure(0,weight=1)
         self.columnconfigure(1,weight=1)
-        self.columnconfigure(2,weight=1)
+        self.wait_window(self)
+
+
+    def filterTypeButtonPressed(self,filterTypeObject,index):
+        
+        if filterTypeObject.filterType == "Head":
+            
+            for i in range(len(self.headButtonList)):
+                b = self.headButtonList[i]
+                b.config(fg='black')
+
+            b = self.headButtonList[index]
+            b.config(fg='red')
+
+            self.selectedHeadFilterType = filterTypeObject
+            if self.selectedJawFilterType is not None:
+                self.destroy()
+
+        else:
+
+            for i in range(len(self.jawButtonList)):
+                b = self.jawButtonList[i]
+                b.config(fg='black')
+
+            b = self.jawButtonList[index]
+            b.config(fg='red')
+
+            self.selectedJawFilterType = filterTypeObject
+
+            b = self.jawButtonList[index]
+            b.config(fg='red')
+
+            if self.selectedHeadFilterType is not None:
+                self.destroy()
+
+
+

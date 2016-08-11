@@ -8,7 +8,9 @@ class EguanaModel(object):
         def __init__(self):
             self.machine = None
             self.filterFunction = None
-            self.filterType = None
+            self.filterTypeJaw = None
+            self.filterTypeHead = None
+
 
         def getAllowedFilterFunctions(self):
 
@@ -31,6 +33,10 @@ class EguanaModel(object):
             return allowedFilterFunctions
 
         def getAllowedHeadFilterTypes(self):
+            return self.getAllowedHeadFilterTypesForFilterFunction(self.filterFunction)
+            
+
+        def getAllowedHeadFilterTypesForFilterFunction(self,ffObject):
 
             headFilters = []
 
@@ -41,7 +47,7 @@ class EguanaModel(object):
             machineClassName = EguanaModel().machine.__class__.__name__
             machineFileName = machineClassName[0].lower() + machineClassName[1:] + '.py'
 
-            className = self.filterFunction.__class__.__name__
+            className = ffObject.__class__.__name__
             fileName = className[0].lower() + className[1:] + '.py'
 
 
@@ -54,7 +60,13 @@ class EguanaModel(object):
 
             return headFilters
 
+
         def getAllowedJawFilterTypes(self):
+            
+            return self.getAllowedJawFilterTypesForFilterFunction(self.filterFunction)
+
+
+        def getAllowedJawFilterTypesForFilterFunction(self,ffObjects):
             
             jawFilters = []
             with open('config.json') as data_file:    
@@ -64,7 +76,7 @@ class EguanaModel(object):
             machineClassName = EguanaModel().machine.__class__.__name__
             machineFileName = machineClassName[0].lower() + machineClassName[1:] + '.py'
 
-            className = self.filterFunction.__class__.__name__
+            className = ffObjects.__class__.__name__
             fileName = className[0].lower() + className[1:] + '.py'
 
 
