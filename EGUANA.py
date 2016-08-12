@@ -269,12 +269,17 @@ class EguanaGUI(Frame):
             EguanaModel().filterFunction = ffPopup.selectedFilter
             ftPopup = FilterTypePopup(self,ffPopup.selectedFilter)
             if (ftPopup.selectedHeadFilterType is not None) and (ftPopup.selectedHeadFilterType is not None):
+                self.menubar.setSelectedFilters(ffPopup.selectedFilter,ftPopup.selectedHeadFilterType,ftPopup.selectedJawFilterType)
                 EguanaModel().filterTypeHead = ftPopup.selectedHeadFilterType
                 EguanaModel().filterTypeJaw = ftPopup.selectedJawFilterType
                 EguanaModel().filterFunction = ffPopup.selectedFilter
                 buttonText = '{} - Jaw Filter : {} - Head Filter {}'.format(ffPopup.selectedFilter.name,ftPopup.selectedJawFilterType.name, ftPopup.selectedHeadFilterType.name)
                 self.filterButton.config(text=buttonText)
 
+
+    def updateSelectedFilters(self,ffName,ftHeadName,ftJawName): 
+        buttonText = '{} - Jaw Filter : {} - Head Filter {}'.format(ffName,ftHeadName,ftJawName)
+        self.filterButton.config(text=buttonText)
 
     def changeImage(self):
         self.photo = PhotoImage(file=self.photoName)

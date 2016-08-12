@@ -81,7 +81,7 @@ class EguanaMenu(Menu):
                 else:
                     headOrJawString = "Jaw"
 
-                menuObj.add_checkbutton(label=filterTypeObj.name, onvalue=1, offvalue=0, variable=buttonBool, command=lambda i=i, headOrJawString = headOrJawString, ffName = ffObj.name : self.menuItemSelected(i,headOrJawString,ffName))
+                menuObj.add_checkbutton(label=filterTypeObj.name, onvalue=1, offvalue=0, variable=buttonBool, command=lambda i=i, headOrJawString = headOrJawString, ffObj = ffObj : self.menuItemSelected(i,headOrJawString,ffObj))
                 
 
             if menuObj == headMenu:  
@@ -102,13 +102,79 @@ class EguanaMenu(Menu):
 
 
 
- def menuItemSelected(self,i,headOrJawString,ffName):
-    booleanList = self.booleanDictionary[(ffName,headOrJawString)]
+ def menuItemSelected(self,i,headOrJawString,ffObj):
+    booleanList = self.booleanDictionary[(ffObj.name,headOrJawString)]
 
     for idx in range(len(booleanList)):
         booleanList[idx].set(False) 
 
     booleanList[i].set(True)
+
+    selectedHeadFilterName = None
+    selectedJawFilterName = None
+
+    for idx in range(len(self.booleanDictionary[(ffObj.name,"Head")])):
+        if self.booleanDictionary[(ffObj.name,"Head")][idx].get() == True:
+            print('inside head')
+            headFilterTypeList = EguanaModel().getAllowedHeadFilterTypesForFilterFunction(ffObj)
+            selectedHeadFilterName = headFilterTypeList[idx].name
+            break
+
+
+    for idx in range(len(self.booleanDictionary[(ffObj.name,"Jaw")])):
+        if self.booleanDictionary[(ffObj.name,"Jaw")][idx].get() == True:
+            print('inside jaw')
+            jawFilterTypeList = EguanaModel().getAllowedJawFilterTypesForFilterFunction(ffObj)
+            selectedJawFilterName = jawFilterTypeList[idx].name
+            break
+
+    if headOrJawString == "Head":
+        headFilterTypeList = EguanaModel().getAllowedHeadFilterTypesForFilterFunction(ffObj)
+        EguanaModel().filterTypeHead = headFilterTypeList[i]
+    else:
+        jawFilterTypeList = EguanaModel().getAllowedJawFilterTypesForFilterFunction(ffObj)
+        EguanaModel().filterTypeJaw = jawFilterTypeList[i]
+
+    EguanaModel().filterFunction = ffObj
+
+    self.delegate.updateSelectedFilters(ffObj.name,selectedHeadFilterName,selectedJawFilterName)
+
+ def setSelectedFilters(self,ffFilter,ftHeadFilter,ftJawFilter):
+    booleanList = self.booleanDictionary[(ffFilter.name,"Head")]
+    headFilterTypeList = EguanaModel().getAllowedHeadFilterTypesForFilterFunction(ffFilter)
+
+    for boolVar in booleanList:
+        boolVar.set(False)
+
+    idx = None
+
+    for i in range(len(headFilterTypeList)):
+        if headFilterTypeList[i].name == ftHeadFilter.name:
+            idx = i
+            break
+
+
+    booleanList[idx].set(True)
+
+
+    booleanList = self.booleanDictionary[(ffFilter.name,"Jaw")]
+    jawFilterTypeList = EguanaModel().getAllowedJawFilterTypesForFilterFunction(ffFilter)
+
+    for boolVar in booleanList:
+        boolVar.set(False)
+
+    idx = None
+
+    for i in range(len(jawFilterTypeList)):
+        if jawFilterTypeList[i].name == ftJawFilter.name:
+            idx = i
+            break
+
+    booleanList[idx].set(True)
+
+
+
+
 
 
 
