@@ -103,6 +103,14 @@ class EguanaMenu(Menu):
 
 
  def menuItemSelected(self,i,headOrJawString,ffObj):
+
+    
+    for key in self.booleanDictionary:
+            if key[0] is not ffObj.name:
+                booleanList = self.booleanDictionary[(key)]
+                for boolVal in booleanList:
+                    boolVal.set(False)
+
     booleanList = self.booleanDictionary[(ffObj.name,headOrJawString)]
 
     for idx in range(len(booleanList)):
@@ -140,6 +148,15 @@ class EguanaMenu(Menu):
     self.delegate.updateSelectedFilters(ffObj.name,selectedHeadFilterName,selectedJawFilterName)
 
  def setSelectedFilters(self,ffFilter,ftHeadFilter,ftJawFilter):
+    
+
+    for key in self.booleanDictionary:
+        if key[0] is not ffFilter.name:
+            booleanList = self.booleanDictionary[(key)]
+            for boolVal in booleanList:
+                boolVal.set(False)
+
+
     booleanList = self.booleanDictionary[(ffFilter.name,"Head")]
     headFilterTypeList = EguanaModel().getAllowedHeadFilterTypesForFilterFunction(ffFilter)
 
