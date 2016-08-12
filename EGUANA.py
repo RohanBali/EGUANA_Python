@@ -262,6 +262,7 @@ class EguanaGUI(Frame):
         m =  CoilNumDialog(self.frame)
         if m.isSet():
             print(m.getValues())
+            EguanaModel().machine.getDataForTrialNumber(number)
         
     def selectFilter(self):        
         ffPopup = FilterFunctionPopup(self)

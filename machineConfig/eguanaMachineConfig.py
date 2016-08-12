@@ -37,3 +37,11 @@ class EguanaMachineConfig():
 
     def setDirPath(self,path):
         self.dirPath = path   
+
+
+    def getDataForTrialNumber(self,trailNum):
+        return
+
+
+
+

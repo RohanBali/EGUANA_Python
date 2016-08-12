@@ -14,6 +14,7 @@ Created on Fri Jul 29 09:36:50 2016
 from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 import os, os.path
 from tkinter import  DISABLED, NORMAL
+import numpy
 
 class TwoDConfig(EguanaMachineConfig):
     
@@ -58,6 +59,40 @@ class TwoDConfig(EguanaMachineConfig):
 
 
 
-    
+    def getDataForTrialNumber(self,trialNum):
+
+        filePath = self.posPath + "/" + "%04d"%trialNum + '.pos'
+        fileObj = open(filePath,'r',encoding='iso-8859-1')
+        firstLine = fileObj.readline()
+        secondLine = fileObj.readline()
+        offsetVal = int(secondLine)
+        fileObj.seek(offsetVal,0)
+        dataArray = numpy.fromfile(fileObj,numpy.float32)
+        numRows = int(len(dataArray)/112)
+        dataMatrix = numpy.zeros((numRows,112))
+
+        print(" Num Rows - " + str(numRows))
+
+        for i in range(len(dataArray)):
+            dataMatrix[int(i/112)][i%112] = dataArray[i]
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
     
     
