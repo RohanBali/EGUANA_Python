@@ -11,6 +11,12 @@ class EguanaModel(object):
             self.filterTypeJaw = None
             self.filterTypeHead = None
 
+        def getAllFilterFunctions(self):
+
+            with open('config.json') as data_file:    
+                data = json.load(data_file)
+
+            machineList = data['allMachines']
 
         def getAllowedFilterFunctions(self):
 

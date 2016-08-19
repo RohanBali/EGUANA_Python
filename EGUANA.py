@@ -64,15 +64,15 @@ class EguanaGUI(Frame):
         self.supportedDevices = []        
         
         for fileName in [name for name in os.listdir('./machineConfig') if os.path.isfile('./machineConfig/' + name) and not name == 'eguanaMachineConfig.py' and  name.endswith('.py')]:
-            try:
-                components = fileName.split('.')
-                fileName = components[0]
-                className = fileName[0].upper() + fileName[1:]
-                module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
-                classVar = getattr(module,className)
-                self.supportedDevices.append(classVar())
-            except:
-                pass
+        # try:{
+            components = fileName.split('.')
+            fileName = components[0]
+            className = fileName[0].upper() + fileName[1:]
+            module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
+            classVar = getattr(module,className)
+            self.supportedDevices.append(classVar())
+            # except:
+            #     pass
 
         self.selectMachineFrame = Frame(self.frame,relief=FLAT,bg='#FADC46')
         self.selectMachineFrame.pack(fill=BOTH,expand=True)

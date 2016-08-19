@@ -7,12 +7,13 @@ Created on Tue Jul 26 10:15:51 2016
 from tkinter import Menu, DISABLED, NORMAL
 from tkinter import BooleanVar
 from eguanaModel import EguanaModel
+from egpopup import SettingsPopup
 
 class EguanaMenu(Menu):
     
  def __init__(self, parent,delegate):
         Menu.__init__(self, parent)   
-        
+        self.parent = parent
         self.delegate = delegate
         self.initUI()
         self.toggleBooleanButtonStates = []
@@ -21,6 +22,7 @@ class EguanaMenu(Menu):
     self.menu_file = Menu(self)
     self.menu_file.add_command(label='Load 3D')
     self.menu_file.add_command(label='Load 2D')
+    self.menu_file.add_command(label='Settings', command=self.settingsPressed)
 
     self.menu_file.add_command(label='Exit',command=self.delegate.quit)
     
@@ -191,7 +193,8 @@ class EguanaMenu(Menu):
 
 
 
-
+ def settingsPressed(self):
+    settingsPopup = SettingsPopup(self.parent)
 
 
 

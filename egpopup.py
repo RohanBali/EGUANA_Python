@@ -6,7 +6,7 @@ Created on Tue Jul 26 15:34:22 2016
 """
 
 from tkinter import *
-from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W, SUNKEN, Label
+from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W, SUNKEN, Label, OptionMenu
 from eguanaModel import EguanaModel
 
 class FilterFunctionPopup(Toplevel):
@@ -128,5 +128,80 @@ class FilterTypePopup(Toplevel):
             if self.selectedHeadFilterType is not None:
                 self.destroy()
 
+class SettingsPopup(Toplevel):
+
+    def __init__(self,parent):
+    
+        Toplevel.__init__(self) 
+        self.transient(parent)
+        self.focus()
+
+        sw = parent.winfo_screenwidth()
+        sh = parent.winfo_screenheight()
+        self.geometry('%dx%d+%d+%d' % (sw/4, sh/4, sw/2-sw/8, sh/2-sh/8))
+        self.grab_set()
+        self.title("Settings")
+         
+        addButton = Button(self,text='Add',relief=SUNKEN)
+        addButton.grid(row=0,column=0, sticky=N+S+E+W)
+
+        editButton = Button(self, text='Edit', relief=RAISED)
+        editButton.grid(row=0,column=1, sticky=N+S+E+W)
+                
+        dropList = ['Machine', 'Filter Function', 'Filter Type']
+        dropTitle = StringVar()
+        dropTitle.set('Select Type')
+        drop = OptionMenu(self,dropTitle,*dropList, command=self.selectTypeCallback)
+        drop.grid(row=1, column=0, columnspan=2, sticky='ew')
+        
+
+        self.rowconfigure(0,weight=1)
+        self.rowconfigure(1,weight=1)
+        self.columnconfigure(0,weight=1)
+        self.columnconfigure(1,weight=1)
+        self.wait_window(self)
+
+    def selectTypeCallback(self, value):
+
+        if value == 'Machine':
+            loadButton = Button(self, text='Load config file', relief=RAISED, command= lambda : self.machineLoadButtonPressed(loadButton))
+            loadButton.grid(row=2, column=0, columnspan=2, sticky=E+W)
 
 
+        elif value == 'Filter Function':
+            loadButton = Button(self, text='Load config file', relief=RAISED, command=self.loadButtonPressed)
+            loadButton.grid(row=2, column=0, columnspan=2, sticky=E+W)
+
+
+        else: #'Filter Type'
+            loadButton = Button(self, text='Load config file', relief=RAISED, command=self.loadButtonPressed)
+            loadButton.grid(row=2, column=0, columnspan=2, sticky=E+W)
+
+
+
+    def machineLoadButtonPressed(self, loadButton):
+        print(loadButton.cget('text'))
+
+        filePath = filedialog.askopenfilename()
+        
+        if filePath != '':
+            
+            loadButton.config(text=filePath)
+            
+            ffList = EguanaModel().getAllFilterFunctions()
+
+            print(ffList)
+            # dropTitle = StringVar()
+            # dropTitle.set('Filter Functions')
+            # drop = OptionMenu(self,dropTitle,*dropList, command=lambda:self.selectFunctionCallback('ererr'))
+            # drop.grid(row=3, column=1, sticky='ew')
+
+            # dropList = ['Machine', 'Filter Function', 'Filter Type']
+            dropTitle = StringVar()
+            dropTitle.set('Select Type')
+            drop = OptionMenu(self,dropTitle,*dropList, command=self.selectFunctionCallback)
+            drop.grid(row=3, column=1, sticky='ew')        
+
+    def selectFunctionCallback(self, valuejg):
+        print(valuejg)
+        pass
