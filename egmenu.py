@@ -7,7 +7,7 @@ Created on Tue Jul 26 10:15:51 2016
 from tkinter import Menu, DISABLED, NORMAL
 from tkinter import BooleanVar
 from eguanaModel import EguanaModel
-from egpopup import SettingsPopup
+from egpopupSettings.settingsPopup import SettingsPopup
 
 class EguanaMenu(Menu):
     

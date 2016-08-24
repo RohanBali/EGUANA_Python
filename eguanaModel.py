@@ -16,7 +16,27 @@ class EguanaModel(object):
             with open('config.json') as data_file:    
                 data = json.load(data_file)
 
-            machineList = data['allMachines']
+            machineList = data['allFilterFunctions']
+            
+            return machineList
+
+        def getAllHeadFilterTypes(self):
+
+            with open('config.json') as data_file:    
+                data = json.load(data_file)
+
+            headFilterList = data['allHeadFilterTypes']
+            
+            return headFilterList
+
+        def getAllJawFilterTypes(self):
+
+            with open('config.json') as data_file:    
+                data = json.load(data_file)
+
+            jawFilterList = data['allJawFilterTypes']
+            
+            return jawFilterList
 
         def getAllowedFilterFunctions(self):
 
