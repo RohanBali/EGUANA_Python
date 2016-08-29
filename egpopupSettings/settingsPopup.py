@@ -4,6 +4,7 @@ from tkinter.ttk import Notebook
 from eguanaModel import EguanaModel
 from egpopupSettings.filterTypeCheckboxFrame import FilterTypeCheckboxFrame
 from egpopupSettings.filterFunctionCheckboxFrame import FilterFunctionCheckboxFrame
+import subprocess
 
 class SettingsPopup(Toplevel):
 
@@ -38,11 +39,14 @@ class SettingsPopup(Toplevel):
         drop = OptionMenu(self.addFrame,dropTitle,*dropList, command=self.selectTypeCallback)
         drop.grid(row=1, column=0, columnspan=4, sticky='ew')
         
+        self.currentValue = None
 
         self.addFrame.rowconfigure(0,weight=1)
         self.addFrame.rowconfigure(1,weight=1)
         self.addFrame.rowconfigure(2,weight=1)
         self.addFrame.rowconfigure(3,weight=1)
+        self.addFrame.rowconfigure(4,weight=1)
+
         self.addFrame.columnconfigure(0,weight=1)
         self.addFrame.columnconfigure(1,weight=1)
         self.addFrame.columnconfigure(2,weight=1)
@@ -51,19 +55,27 @@ class SettingsPopup(Toplevel):
 
     def selectTypeCallback(self, value):
 
-        if value == 'Machine':
-            loadButton = Button(self.addFrame, text='Load config file', relief=RAISED, command=lambda:self.machineLoadButtonPressed(loadButton))
-            loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
+        if value != self.currentValue:
+
+            self.currentValue = value
+
+            for i in range(3,self.addFrame.grid_size()[1]): 
+                    for element in self.addFrame.grid_slaves(i,None):
+                        element.grid_forget()
+
+            if value == 'Machine':
+                loadButton = Button(self.addFrame, text='Load config file', relief=RAISED, command=lambda:self.machineLoadButtonPressed(loadButton))
+                loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
 
 
-        elif value == 'Filter Function':
-            loadButton = Button(self.addFrame, text='Load config file', relief=RAISED, command=lambda:self.filterFunctionLoadButtonPressed(loadButton))
-            loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
+            elif value == 'Filter Function':
+                loadButton = Button(self.addFrame, text='Load config file', relief=RAISED, command=lambda:self.filterFunctionLoadButtonPressed(loadButton))
+                loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
 
 
-        else: #'Filter Type'
-            loadButton = Button(self.addFrame, text='Load config file', relief=RAISED, command=lambda:self.filterTypeLoadButtonPressed(loadButton))
-            loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
+            else: #'Filter Type'
+                loadButton = Button(self.addFrame, text='Load config file', relief=RAISED, command=lambda:self.filterTypeLoadButtonPressed(loadButton))
+                loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
 
 
 
@@ -72,7 +84,7 @@ class SettingsPopup(Toplevel):
         filePath = filedialog.askopenfilename()
         
         if filePath != '':
-            
+
             loadButton.config(text=filePath)
 
             filterFunctionNotebook = Notebook(self.addFrame)
@@ -93,6 +105,10 @@ class SettingsPopup(Toplevel):
                 filterFunctionFrame.pack(fill=BOTH, expand=True)
                 filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getFilterObjectFromFunctionName(dropList[i]).name)
               
+            applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyMachineButtonPressed(filePath)).grid(row=4,column=3,columnspan=1,sticky=S+E)
+
+
+
     def filterFunctionLoadButtonPressed(self, loadButton):
 
         filePath = filedialog.askopenfilename()
@@ -118,6 +134,7 @@ class SettingsPopup(Toplevel):
                 filterFunctionFrame.pack(fill=BOTH, expand=True)
                 filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(dropList[i]).name)
     
+            applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterFunctionButtonPressed(filePath)).grid(row=4,column=3,columnspan=1,sticky=S+E)
 
     def filterTypeLoadButtonPressed(self, loadButton):
 
@@ -150,6 +167,26 @@ class SettingsPopup(Toplevel):
                 filterFunctionFrame.pack(fill=BOTH, expand=True)
                 filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(dropList[i]).name)
  
+            applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterTypeButtonPressed(filePath,headCheckButtonInt,jawCheckButtonInt)).grid(row=5,column=3,columnspan=1,sticky=S+E)
+
+    
+    def applyMachineButtonPressed(self,filePath):
+        subprocess.call('cp '+filePath+' ./machineConfig/', shell=True)
+        self.destroy()
+
+    def applyFilterFunctionButtonPressed(self,filePath):
+        subprocess.call('cp '+filePath+' ./filterConfig/', shell=True)
+        self.destroy()
+
+
+    def applyFilterTypeButtonPressed(self,filePath,headCheckButtonInt,jawCheckButtonInt):
+
+        if headCheckButtonInt.get():
+            subprocess.call('cp '+filePath+' ./filterTypesConfig/headFilters/', shell=True)
+        else:
+            subprocess.call('cp '+filePath+' ./filterTypesConfig/jawFilters/', shell=True)
+
+        self.destroy()
 
     def headCheckButtonPressed(self,headCheckButtonInt,jawCheckButtonInt):
 
