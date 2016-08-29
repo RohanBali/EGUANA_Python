@@ -16,9 +16,18 @@ class EguanaModel(object):
             with open('config.json') as data_file:    
                 data = json.load(data_file)
 
-            machineList = data['allFilterFunctions']
+            filterFunctionFilenameList = data['allFilterFunctions']
             
-            return machineList
+            return filterFunctionFilenameList
+
+        def getAllMachines(self):
+
+            with open('config.json') as data_file:    
+                data = json.load(data_file)
+
+            machineFilenameList = data['allMachines']
+            
+            return machineFilenameList
 
         def getAllHeadFilterTypes(self):
 
@@ -143,11 +152,35 @@ class EguanaModel(object):
             return filterTypeObjectArray
 
 
+        def getFilterFunctionObjectsFromFunctionNameArray(self,filterFunctionNameArray):
+        
+            filterFunctionObjectArray = []
+
+            for filterFunctionName in filterFunctionNameArray:
+                components = filterFunctionName.split('.')
+                fileName = components[0]
+                className = fileName[0].upper() + fileName[1:]
+                module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])                        
+                classVar = getattr(module,className)
+                classObject = classVar()
+                filterFunctionObjectArray.append(classObject)
+                
+            return filterFunctionObjectArray     
+
         def getFilterObjectFromFunctionName(self,filterFunctionName):
             components = filterFunctionName.split('.')
             fileName = components[0]
             className = fileName[0].upper() + fileName[1:]
             module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])                        
+            classVar = getattr(module,className)
+            classObject = classVar()
+            return classObject
+
+        def getMachineObjectFromMachineName(self,machineName):
+            components = machineName.split('.')
+            fileName = components[0]
+            className = fileName[0].upper() + fileName[1:]
+            module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
             classVar = getattr(module,className)
             classObject = classVar()
             return classObject
