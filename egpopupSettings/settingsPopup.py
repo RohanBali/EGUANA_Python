@@ -1,10 +1,12 @@
 from tkinter import *
-from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W, SUNKEN, Label, OptionMenu, BOTH
+from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W, SUNKEN, Label, OptionMenu, BOTH, messagebox
 from tkinter.ttk import Notebook
 from eguanaModel import EguanaModel
 from egpopupSettings.filterTypeCheckboxFrame import FilterTypeCheckboxFrame
 from egpopupSettings.filterFunctionCheckboxFrame import FilterFunctionCheckboxFrame
 import subprocess
+import os.path
+import json
 
 class SettingsPopup(Toplevel):
 
@@ -85,27 +87,39 @@ class SettingsPopup(Toplevel):
         
         if filePath != '':
 
-            loadButton.config(text=filePath)
+            components = filePath.split('/')
+            fileName = components[-1]
 
-            filterFunctionNotebook = Notebook(self.addFrame)
-            filterFunctionNotebook.grid(row=3, column=0,columnspan=4, sticky=E+W)
+            if os.path.isfile(os.getcwd()+'/machineConfig/'+fileName) == False:
+
+                loadButton.config(text=filePath)
+
+                filterFunctionNotebook = Notebook(self.addFrame)
+                filterFunctionNotebook.grid(row=3, column=0,columnspan=4, sticky=E+W)
+                
+                dropList = EguanaModel().getAllFilterFunctions()
+
+                headList = EguanaModel().getAllHeadFilterTypes()
+                modifiedHeadList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(headList,'Head')
+
+                jawList = EguanaModel().getAllJawFilterTypes()
+                modifiedJawList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(jawList,'Jaw')
             
-            dropList = EguanaModel().getAllFilterFunctions()
 
-            headList = EguanaModel().getAllHeadFilterTypes()
-            modifiedHeadList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(headList,'Head')
+                filterFunctionFrameList = []
 
-            jawList = EguanaModel().getAllJawFilterTypes()
-            modifiedJawList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(jawList,'Jaw')
-        
+                for i in range(len(dropList)):
 
-            for i in range(len(dropList)):
+                    filterFunctionFrame = FilterTypeCheckboxFrame(filterFunctionNotebook,modifiedHeadList,modifiedJawList)
+                    filterFunctionFrameList.append(filterFunctionFrame)
+                    filterFunctionFrame.pack(fill=BOTH, expand=True)
+                    filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getFilterObjectFromFunctionName(dropList[i]).name)
+                  
+                applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyMachineButtonPressed(filePath, dropList, filterFunctionFrameList)).grid(row=4,column=3,columnspan=1,sticky=S+E)
+            
+            else:
+                messagebox.showinfo("Error", "File already exists in machineConfig directory: " + fileName)
 
-                filterFunctionFrame = FilterTypeCheckboxFrame(filterFunctionNotebook,modifiedHeadList,modifiedJawList)
-                filterFunctionFrame.pack(fill=BOTH, expand=True)
-                filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getFilterObjectFromFunctionName(dropList[i]).name)
-              
-            applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyMachineButtonPressed(filePath)).grid(row=4,column=3,columnspan=1,sticky=S+E)
 
 
 
@@ -115,26 +129,36 @@ class SettingsPopup(Toplevel):
             
         if filePath != '':
 
-            loadButton.config(text=filePath)
+            components = filePath.split('/')
+            fileName = components[-1]
 
-            filterFunctionNotebook = Notebook(self.addFrame)
-            filterFunctionNotebook.grid(row=3, column=0,columnspan=4, sticky=E+W)
 
-            dropList = EguanaModel().getAllMachines()
+            if os.path.isfile(os.getcwd()+'/filterConfig/'+fileName) == False:
 
-            headList = EguanaModel().getAllHeadFilterTypes()
-            modifiedHeadList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(headList,'Head')
+                loadButton.config(text=filePath)
 
-            jawList = EguanaModel().getAllJawFilterTypes()
-            modifiedJawList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(jawList,'Jaw')
+                filterFunctionNotebook = Notebook(self.addFrame)
+                filterFunctionNotebook.grid(row=3, column=0,columnspan=4, sticky=E+W)
+
+                dropList = EguanaModel().getAllMachines()
+
+                headList = EguanaModel().getAllHeadFilterTypes()
+                modifiedHeadList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(headList,'Head')
+
+                jawList = EguanaModel().getAllJawFilterTypes()
+                modifiedJawList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(jawList,'Jaw')
+            
+                for i in range(len(dropList)):
+
+                    filterFunctionFrame = FilterTypeCheckboxFrame(filterFunctionNotebook,modifiedHeadList,modifiedJawList)
+                    filterFunctionFrame.pack(fill=BOTH, expand=True)
+                    filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(dropList[i]).name)
         
-            for i in range(len(dropList)):
+                applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterFunctionButtonPressed(filePath)).grid(row=4,column=3,columnspan=1,sticky=S+E)
 
-                filterFunctionFrame = FilterTypeCheckboxFrame(filterFunctionNotebook,modifiedHeadList,modifiedJawList)
-                filterFunctionFrame.pack(fill=BOTH, expand=True)
-                filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(dropList[i]).name)
-    
-            applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterFunctionButtonPressed(filePath)).grid(row=4,column=3,columnspan=1,sticky=S+E)
+            else:
+                messagebox.showinfo("Error", "File already exists in machineConfig directory: " + fileName)
+
 
     def filterTypeLoadButtonPressed(self, loadButton):
 
@@ -142,35 +166,79 @@ class SettingsPopup(Toplevel):
             
         if filePath != '':
 
-            loadButton.config(text=filePath)
-
-            headCheckButtonInt = IntVar()
-            headCheckButtonInt.set(1)
-            jawCheckButtonInt = IntVar()
-
-            headCheckButton = Checkbutton(self.addFrame, text='Head', variable=headCheckButtonInt, command=lambda:self.headCheckButtonPressed(headCheckButtonInt,jawCheckButtonInt)).grid(row=3, column=0, columnspan=1, sticky=N+E+W)
-            jawCheckButton = Checkbutton(self.addFrame, text='Jaw', variable=jawCheckButtonInt, command=lambda:self.jawCheckButtonPressed(headCheckButtonInt,jawCheckButtonInt)).grid(row=3, column=2, columnspan=1, sticky=N+E+W)
+            components = filePath.split('/')
+            fileName = components[-1]
 
 
-            filterFunctionNotebook = Notebook(self.addFrame)
-            filterFunctionNotebook.grid(row=4, column=0,columnspan=4, sticky=E+W)
+            if os.path.isfile(os.getcwd()+'/filterTypesConfig/headFilters/'+fileName) == False \
+                and os.path.isfile(os.getcwd()+'/filterTypesConfig/jawFilters/'+fileName) == False:            
 
-            dropList = EguanaModel().getAllMachines()
+                loadButton.config(text=filePath)
 
-            filterFunctionNameList = EguanaModel().getAllFilterFunctions()
-            filterFunctionObjectList = EguanaModel().getFilterFunctionObjectsFromFunctionNameArray(filterFunctionNameList)
+                headCheckButtonInt = IntVar()
+                headCheckButtonInt.set(1)
+                jawCheckButtonInt = IntVar()
+
+                headCheckButton = Checkbutton(self.addFrame, text='Head', variable=headCheckButtonInt, command=lambda:self.headCheckButtonPressed(headCheckButtonInt,jawCheckButtonInt)).grid(row=3, column=0, columnspan=1, sticky=N+E+W)
+                jawCheckButton = Checkbutton(self.addFrame, text='Jaw', variable=jawCheckButtonInt, command=lambda:self.jawCheckButtonPressed(headCheckButtonInt,jawCheckButtonInt)).grid(row=3, column=2, columnspan=1, sticky=N+E+W)
 
 
-            for i in range(len(dropList)):
+                filterFunctionNotebook = Notebook(self.addFrame)
+                filterFunctionNotebook.grid(row=4, column=0,columnspan=4, sticky=E+W)
 
-                filterFunctionFrame = FilterFunctionCheckboxFrame(filterFunctionNotebook,filterFunctionObjectList)
-                filterFunctionFrame.pack(fill=BOTH, expand=True)
-                filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(dropList[i]).name)
- 
-            applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterTypeButtonPressed(filePath,headCheckButtonInt,jawCheckButtonInt)).grid(row=5,column=3,columnspan=1,sticky=S+E)
+                dropList = EguanaModel().getAllMachines()
+
+                filterFunctionNameList = EguanaModel().getAllFilterFunctions()
+                filterFunctionObjectList = EguanaModel().getFilterFunctionObjectsFromFunctionNameArray(filterFunctionNameList)
+
+
+                for i in range(len(dropList)):
+
+                    filterFunctionFrame = FilterFunctionCheckboxFrame(filterFunctionNotebook,filterFunctionObjectList)
+                    filterFunctionFrame.pack(fill=BOTH, expand=True)
+                    filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(dropList[i]).name)
+     
+                applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterTypeButtonPressed(filePath,headCheckButtonInt,jawCheckButtonInt)).grid(row=5,column=3,columnspan=1,sticky=S+E)
+
+            else:
+                messagebox.showinfo("Error", "File already exists in machineConfig directory: " + fileName)
 
     
-    def applyMachineButtonPressed(self,filePath):
+    def applyMachineButtonPressed(self,filePath, dropList, filterFunctionFrameList):
+
+        with open("./config.json", 'r') as f:
+            configJSONDict = json.loads(f.read())
+
+        configArray = configJSONDict["configurations"]
+
+        newMachineDict = {}
+
+        components = filePath.split('/')
+        fileName = components[-1]
+        newMachineDict["machineName"] = fileName
+
+        newFilterFunctionsList = []
+
+        for i in range(len(filterFunctionFrameList)):
+            if filterFunctionFrameList[i].isEnabled():
+                newFilterFunctionDict = {}
+                newFilterFunctionDict["filterApplicationName"] =  EguanaModel().getFilterObjectFromFunctionName(dropList[i]).name
+
+                filterTypesDict = {}
+
+                filterTypesDict['headFilters'] = filterFunctionFrameList[i].getEnabledHeadFilterTypeNames()
+                filterTypesDict['jawFilters'] = filterFunctionFrameList[i].getEnabledJawFilterTypeNames()
+
+                newFilterFunctionDict['filterTypes'] = filterTypesDict
+                newFilterFunctionsList.append(newFilterFunctionDict)
+
+        newMachineDict['filterFunctions'] = newFilterFunctionsList
+
+        configArray.append(newMachineDict)
+
+        with open("./config.json", 'w') as f:
+            json.dump(configJSONDict,f)
+
         subprocess.call('cp '+filePath+' ./machineConfig/', shell=True)
         self.destroy()
 
@@ -203,5 +271,7 @@ class SettingsPopup(Toplevel):
             headCheckButtonInt.set(0)
         else:
             headCheckButtonInt.set(1)
+
+
 
                 

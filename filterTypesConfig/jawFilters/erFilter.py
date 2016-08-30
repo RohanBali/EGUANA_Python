@@ -1,6 +1,6 @@
 from filterTypesConfig.eguanaFilterTypesConfig import EguanaFilterTypesConfig
 
-class ErFilter():
+class ErFilter(EguanaFilterTypesConfig):
 	def __init__(self):
 		EguanaFilterTypesConfig.__init__(self)
 		self.name = "ER Filter"
