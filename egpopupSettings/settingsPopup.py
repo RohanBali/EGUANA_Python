@@ -118,16 +118,16 @@ class SettingsPopup(Toplevel):
                     modifiedJawList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(jawList,'Jaw')
                 
 
-                    filterFunctionFrameList = []
+                    filterTypeFrameList = []
 
                     for i in range(len(dropList)):
 
-                        filterFunctionFrame = FilterTypeCheckboxFrame(filterFunctionNotebook,modifiedHeadList,modifiedJawList)
-                        filterFunctionFrameList.append(filterFunctionFrame)
+                        filterTypeFrame = FilterTypeCheckboxFrame(filterFunctionNotebook,modifiedHeadList,modifiedJawList)
+                        filterTypeFrameList.append(filterTypeFrame)
                         filterFunctionFrame.pack(fill=BOTH, expand=True)
-                        filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getFilterObjectFromFunctionName(dropList[i]).name)
+                        filterFunctionNotebook.add(filterTypeFrame, text=EguanaModel().getFilterObjectFromFunctionName(dropList[i]).name)
                       
-                    applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyMachineButtonPressed(filePath, dropList, filterFunctionFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+                    applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyMachineButtonPressed(filePath, dropList, filterTypeFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
                 
                 else:
                     messagebox.showinfo("Error", errorString)
@@ -167,13 +167,16 @@ class SettingsPopup(Toplevel):
                     jawList = EguanaModel().getAllJawFilterTypes()
                     modifiedJawList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(jawList,'Jaw')
                 
+                    filterTypeFrameList = []
+
                     for i in range(len(dropList)):
 
-                        filterFunctionFrame = FilterTypeCheckboxFrame(filterFunctionNotebook,modifiedHeadList,modifiedJawList)
-                        filterFunctionFrame.pack(fill=BOTH, expand=True)
-                        filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(dropList[i]).name)
-            
-                    applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterFunctionButtonPressed(filePath)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+                        filterTypeFrame = FilterTypeCheckboxFrame(filterFunctionNotebook,modifiedHeadList,modifiedJawList)
+                        filterTypeFrame.pack(fill=BOTH, expand=True)
+                        filterFunctionNotebook.add(filterTypeFrame, text=EguanaModel().getMachineObjectFromMachineName(dropList[i]).name)
+                        filterTypeFrameList.append(filterTypeFrame)
+
+                    applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterFunctionButtonPressed(filePath,dropList,filterTypeFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
 
                 else:
                     messagebox.showinfo("Error",errorString)
@@ -215,14 +218,16 @@ class SettingsPopup(Toplevel):
                     filterFunctionNameList = EguanaModel().getAllFilterFunctions()
                     filterFunctionObjectList = EguanaModel().getFilterFunctionObjectsFromFunctionNameArray(filterFunctionNameList)
 
+                    filterFunctionFrameList = []
 
                     for i in range(len(dropList)):
 
                         filterFunctionFrame = FilterFunctionCheckboxFrame(filterFunctionNotebook,filterFunctionObjectList)
                         filterFunctionFrame.pack(fill=BOTH, expand=True)
                         filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(dropList[i]).name)
-         
-                    applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterTypeButtonPressed(filePath,headCheckButtonInt,jawCheckButtonInt)).grid(row=5,column=1,columnspan=1,sticky=S+E)
+                        filterFunctionFrameList.append(filterFunctionFrame)
+
+                    applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterTypeButtonPressed(filePath,headCheckButtonInt,jawCheckButtonInt,dropList,filterFunctionFrameList)).grid(row=5,column=1,columnspan=1,sticky=S+E)
 
                 else:
 
@@ -232,7 +237,7 @@ class SettingsPopup(Toplevel):
                 messagebox.showinfo("Error", "File already exists in machineConfig directory: " + fileName)
 
     
-    def applyMachineButtonPressed(self,filePath, dropList, filterFunctionFrameList):
+    def applyMachineButtonPressed(self,filePath, dropList, filterTypeFrameList):
 
         with open("./config.json", 'r') as f:
             configJSONDict = json.loads(f.read())
@@ -247,22 +252,25 @@ class SettingsPopup(Toplevel):
 
         newFilterFunctionsList = []
 
-        for i in range(len(filterFunctionFrameList)):
-            if filterFunctionFrameList[i].isEnabled():
+        for i in range(len(filterTypeFrameList)):
+            if filterTypeFrameList[i].isEnabled():
                 newFilterFunctionDict = {}
                 newFilterFunctionDict["filterApplicationName"] =  EguanaModel().getFilterObjectFromFunctionName(dropList[i]).name
 
                 filterTypesDict = {}
 
-                filterTypesDict['headFilters'] = filterFunctionFrameList[i].getEnabledHeadFilterTypeNames()
-                filterTypesDict['jawFilters'] = filterFunctionFrameList[i].getEnabledJawFilterTypeNames()
+                filterTypesDict['headFilters'] = filterTypeFrameList[i].getEnabledHeadFilterTypeNames()
+                filterTypesDict['jawFilters'] = filterTypeFrameList[i].getEnabledJawFilterTypeNames()
 
                 newFilterFunctionDict['filterTypes'] = filterTypesDict
                 newFilterFunctionsList.append(newFilterFunctionDict)
 
         newMachineDict['filterFunctions'] = newFilterFunctionsList
-
         configArray.append(newMachineDict)
+
+        allMachinesList = configJSONDict["allMachines"]
+        allMachinesList.append(fileName)
+
 
         with open("./config.json", 'w') as f:
             json.dump(configJSONDict,f)
@@ -270,12 +278,119 @@ class SettingsPopup(Toplevel):
         subprocess.call('cp '+filePath+' ./machineConfig/', shell=True)
         self.destroy()
 
-    def applyFilterFunctionButtonPressed(self,filePath):
+    def applyFilterFunctionButtonPressed(self,filePath, dropList, filterTypeFrameList):
+
+
+        components = filePath.split('/')
+        fileName = components[-1]
+
+        with open("./config.json", 'r') as f:
+            configJSONDict = json.loads(f.read())
+
+        configArray = configJSONDict["configurations"]
+
+
+        for machineDict in configArray:
+
+            if filterTypeFrameList[dropList.index(machineDict['machineName'])].isEnabled():
+
+                newFilterFunctionDict = {}
+                newFilterFunctionDict['filterApplicationName'] = fileName
+
+                filterTypesDict = {}
+                filterTypesDict['headFilters'] = filterTypeFrameList[dropList.index(machineDict['machineName'])].getEnabledHeadFilterTypeNames()
+                filterTypesDict['jawFilters'] = filterTypeFrameList[dropList.index(machineDict['machineName'])].getEnabledJawFilterTypeNames()
+
+                newFilterFunctionDict['filterTypes'] = filterTypesDict
+
+                filterFunctionsArray = machineDict['filterFunctions']
+                filterFunctionsArray.append(newFilterFunctionDict)
+
+
+        allFilterFuctions = configJSONDict["allFilterFunctions"]
+        allFilterFuctions.append(fileName)
+
+
+        with open("./config.json", 'w') as f:
+            json.dump(configJSONDict,f)
+
         subprocess.call('cp '+filePath+' ./filterConfig/', shell=True)
         self.destroy()
 
 
-    def applyFilterTypeButtonPressed(self,filePath,headCheckButtonInt,jawCheckButtonInt):
+    def applyFilterTypeButtonPressed(self,filePath,headCheckButtonInt,jawCheckButtonInt,dropList, filterFunctionFrameList):
+
+
+        components = filePath.split('/')
+        fileName = components[-1]
+
+        with open("./config.json", 'r') as f:
+            configJSONDict = json.loads(f.read())
+
+        configArray = configJSONDict["configurations"]
+
+        for machineDict in configArray:
+
+            if filterFunctionFrameList[dropList.index(machineDict['machineName'])].isEnabled():
+
+                enabledFilterFunctionFilenameList = filterFunctionFrameList[dropList.index(machineDict['machineName'])].getEnabledFilterFunctionNames()
+
+                filterFunctionJsonList = machineDict['filterFunctions']
+
+
+                for filterFunctionFilename in enabledFilterFunctionFilenameList:
+
+                    filterFunctionTmpDictionary = None
+
+                    for filterFunctionDict in filterFunctionJsonList:
+
+                        if filterFunctionDict['filterApplicationName'] == filterFunctionFilename:
+
+                            filterFunctionTmpDictionary = filterFunctionDict
+                            break
+
+
+                    if filterFunctionTmpDictionary:
+                        if headCheckButtonInt.get():
+                            filterTypeArray = filterFunctionTmpDictionary['filterTypes']['headFilters']
+                            filterTypeArray.append(fileName)
+                        else:
+                            filterTypeArray = filterFunctionTmpDictionary['filterTypes']['jawFilter']
+                            filterTypeArray.append(fileName)
+                    else:
+
+                        filterFunctionTmpDictionary = {}
+                        filterFunctionTmpDictionary['headFilters'] = []
+                        filterFunctionTmpDictionary['jawFilters'] = []
+                        filterFunctionTmpDictionary['filterApplicationName'] = filterFunctionFilename
+
+                        if headCheckButtonInt.get():
+                            filterTypeArray = filterFunctionTmpDictionary['headFilters']
+                            filterTypeArray.append(fileName)
+                        else:
+                            filterTypeArray = filterFunctionTmpDictionary['jawFilters']
+                            filterTypeArray.append(fileName)
+
+                        filterFunctionJsonList.append(filterFunctionTmpDictionary)
+
+
+
+
+
+
+
+        if headCheckButtonInt.get():
+            allHeadFilterTypes = configJSONDict["allHeadFilterTypes"]
+            allHeadFilterTypes.append(fileName)
+        else:
+            allJawFilterTypes = configJSONDict['allJawFilterTypes']
+            allJawFilterTypes.append(fileName)
+
+
+        with open("./config.json", 'w') as f:
+            json.dump(configJSONDict,f)
+
+
 
         if headCheckButtonInt.get():
             subprocess.call('cp '+filePath+' ./filterTypesConfig/headFilters/', shell=True)

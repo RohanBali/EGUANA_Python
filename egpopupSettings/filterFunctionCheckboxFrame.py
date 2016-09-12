@@ -11,12 +11,15 @@ class FilterFunctionCheckboxFrame(Frame):
         Checkbutton(self, text='Enabled', variable=self.enableCheckButtonInt, command=self.enabledPressed).grid(row=0, column=0, columnspan=2, sticky=N+E)
 
         self.filterFunctionCheckButtonList = []
+        self.filterFunctionCheckButtonVarList = []
+        self.filterFunctionObjectList = filterFunctionObjectList
        
         for h in range(len(filterFunctionObjectList)):
             checkBoxVar2 = IntVar()
             filterFunctionCheckButton = Checkbutton(self, text=filterFunctionObjectList[h].name, variable=checkBoxVar2, state = DISABLED)
             self.filterFunctionCheckButtonList.append(filterFunctionCheckButton)
             filterFunctionCheckButton.grid(row=1+h, column=0, sticky=W)
+            self.filterFunctionCheckButtonVarList.append(checkBoxVar2)
 
 		
     def enabledPressed(self):
@@ -29,3 +32,18 @@ class FilterFunctionCheckboxFrame(Frame):
 
             for h in range(len(self.filterFunctionCheckButtonList)):
                 self.filterFunctionCheckButtonList[h].config(state = DISABLED)
+
+    def isEnabled(self):
+        return self.enableCheckButtonInt.get()
+
+
+    def getEnabledFilterFunctionNames(self):
+
+        enabledFilterFunctionNames = []
+
+        for i in range(len(self.filterFunctionCheckButtonVarList)):
+            if self.filterFunctionCheckButtonVarList[i].get():
+                enabledFilterFunctionNames.append(self.filterFunctionObjectList[i].getFilename())
+
+        return enabledFilterFunctionNames
+

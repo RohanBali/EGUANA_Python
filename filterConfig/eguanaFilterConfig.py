@@ -1,3 +1,5 @@
+import sys
+
 import os, os.path
 import json
 from eguanaModel import EguanaModel
@@ -16,3 +18,8 @@ class EguanaFilterConfig():
         print(self.jawFilters)
 
 
+
+    def getFilename(self):
+        fullPath =  sys.modules[self.__class__.__module__].__file__
+        components = fullPath.split('/')
+        return components[-1]
