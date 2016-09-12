@@ -26,9 +26,6 @@ class EguanaMachineConfig():
     def whatsMyName(self):
         print("EguanaMachineConfig")
         
-    def readHeadFile(self,filename):
-        return 1
-
     def isDirectoryValid(self, path):
         return
 

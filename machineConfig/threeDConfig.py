@@ -22,9 +22,6 @@ class ThreeDConfig(EguanaMachineConfig):
         self.getAllowedFilters = ['speech3DFilterConfig.py','swallow3DFilterConfig.py']   
         self.name = "3D EMA"
         
-    def readHeadFile(self,filename):
-        return 1
-        
     def whatsMyName(self):
         print("ThreeDConfig")
 
