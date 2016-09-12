@@ -1,0 +1,12 @@
+__pycache__/__init__.cpython-35.pyc
+__pycache__/speech3DFilterConfig.cpython-35.pyc
+__pycache__/twoDConfig.cpython-35.pyc
+egpopupSettings/__pycache__/editSettingsFrame.cpython-35.pyc
+filterConfig/.DS_Store
+filterTypesConfig/headFilters/.DS_Store
+filterTypesConfig/jawFilters/.DS_Store
+machineConfig/.DS_Store
+machineConfig/__pycache__/posFilter.cpython-35.pyc
+tests/__pycache__/filterConfigTest.cpython-35.pyc
+tests/__pycache__/filterTypesConfigTest.cpython-35.pyc
+tests/__pycache__/machineConfigTest.cpython-35.pyc
