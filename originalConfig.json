@@ -9,15 +9,13 @@
             "headFilters": [
               "cKroosFilter.py",
               "posFilter.py",
-              "rHenriques.py",
-              "No Correction"
+              "rHenriquesFilter.py"
             ],
             "jawFilter": [
               "joanaFilter.py",
               "goldFilter.py",
               "erFilter.py",
-              "ssFilter",
-              "No Filter"
+              "ssFilter.py"
             ]
           }
         },
@@ -27,15 +25,13 @@
             "headFilters": [
               "cKroosFilter.py",
               "posFilter.py",
-              "rHenriques.py",
-              "No Correction"
+              "rHenriquesFilter.py"
             ],
             "jawFilter": [
               "joanaFilter.py",
               "goldFilter.py",
               "erFilter.py",
-              "ssFilter",
-              "No Filter"
+              "ssFilter.py"
             ]
           }
         }
@@ -50,15 +46,13 @@
             "headFilters": [
               "cKroosFilter.py",
               "posFilter.py",
-              "rHenriques.py",
-              "No Correction"
+              "rHenriquesFilter.py"
             ],
             "jawFilter": [
               "joanaFilter.py",
               "goldFilter.py",
               "erFilter.py",
-              "ssFilter",
-              "No Filter"
+              "ssFilter.py"            
             ]
           }
         },
@@ -68,15 +62,13 @@
             "headFilters": [
               "cKroosFilter.py",
               "posFilter.py",
-              "rHenriques.py",
-              "No Correction"
+              "rHenriquesFilter.py"
             ],
             "jawFilter": [
               "joanaFilter.py",
               "goldFilter.py",
               "erFilter.py",
-              "ssFilter",
-              "No Filter"
+              "ssFilter.py"
             ]
           }
         }

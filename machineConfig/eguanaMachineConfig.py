@@ -5,6 +5,7 @@ Created on Fri Jul 29 11:00:13 2016
 @author: rohanbali
 """
 from tkinter import  DISABLED, NORMAL
+import sys
 
 class EguanaMachineConfig():
 
@@ -39,6 +40,9 @@ class EguanaMachineConfig():
     def getDataForTrialNumber(self,trailNum):
         return
 
-
+    def getFilename(self):
+        fullPath =  sys.modules[self.__class__.__module__].__file__
+        components = fullPath.split('/')
+        return components[-1]
 
 

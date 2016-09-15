@@ -68,7 +68,7 @@ class SettingsPopup(Toplevel):
 
             self.currentValue = value
 
-            for i in range(3,self.addFrame.grid_size()[1]): 
+            for i in range(2,self.addFrame.grid_size()[1]): 
                     for element in self.addFrame.grid_slaves(i,None):
                         element.grid_forget()
 
@@ -112,7 +112,7 @@ class SettingsPopup(Toplevel):
                     dropList = EguanaModel().getAllFilterFunctions()
 
                     headList = EguanaModel().getAllHeadFilterTypes()
-                    modifiedHeadList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(headList,'Head')
+                    modifiedHeadList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(headList,'Head') # TODO : rename to headObjectList when refactor
 
                     jawList = EguanaModel().getAllJawFilterTypes()
                     modifiedJawList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(jawList,'Jaw')
@@ -124,7 +124,7 @@ class SettingsPopup(Toplevel):
 
                         filterTypeFrame = FilterTypeCheckboxFrame(filterFunctionNotebook,modifiedHeadList,modifiedJawList)
                         filterTypeFrameList.append(filterTypeFrame)
-                        filterFunctionFrame.pack(fill=BOTH, expand=True)
+                        filterTypeFrame.pack(fill=BOTH, expand=True)
                         filterFunctionNotebook.add(filterTypeFrame, text=EguanaModel().getFilterObjectFromFunctionName(dropList[i]).name)
                       
                     applyButton  = Button(self.addFrame,text='Apply & Close',relief=RAISED,command=lambda:self.applyMachineButtonPressed(filePath, dropList, filterTypeFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
