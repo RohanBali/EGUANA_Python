@@ -32,7 +32,7 @@ class SettingsPopup(Toplevel):
         self.addFrame = Frame(self.modeNotebook)
         self.addFrame.pack(fill=BOTH, expand=True)
 
-        self.editFrame = EditSettingsFrame(self.modeNotebook)
+        self.editFrame = EditSettingsFrame(self.modeNotebook,self)
         self.editFrame.pack(fill=BOTH, expand=True)
 
         self.modeNotebook.add(self.addFrame, text='Add')
@@ -196,7 +196,8 @@ class SettingsPopup(Toplevel):
             if os.path.isfile(os.getcwd()+'/filterTypesConfig/headFilters/'+fileName) == False \
                 and os.path.isfile(os.getcwd()+'/filterTypesConfig/jawFilters/'+fileName) == False:            
                 
-                [isValid, errorString] = FilterTypesConfigTest(filePath).runTests()
+                # [isValid, errorString] = FilterTypesConfigTest(filePath).runTests()
+                isValid = 1
 
                 if isValid:
 

@@ -7,12 +7,11 @@ from egpopupSettings.filterTypeCheckboxFrame import FilterTypeCheckboxFrame
 
 class FilterTypeCheckboxFrameForEdit(FilterTypeCheckboxFrame):
 
-	def __init__(self,notebook,headObjectList,jawObjectList,isEnabled,enabledJawFilenameList,enabledHeadFilenameList):
+	def __init__(self,notebook, headObjectList,jawObjectList,isEnabled,enabledJawFilenameList,enabledHeadFilenameList):
 
 		FilterTypeCheckboxFrame.__init__(self,notebook,headObjectList,jawObjectList)
 		self.enableCheckButtonInt.set(isEnabled)
 		self.enabledPressed()
-
 
 
 		jawBoolList = []

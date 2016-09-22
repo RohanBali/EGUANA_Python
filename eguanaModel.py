@@ -59,7 +59,10 @@ class EguanaModel(object):
             className = self.machine.__class__.__name__
             fileName = className[0].lower() + className[1:] + '.py'
 
-            for i in data:
+            configJsonArray = data['configurations']
+
+
+            for i in configJsonArray:
                 if i['machineName'] == fileName:
                     filterData = i['filterFunctions']
                     for j in filterData:
@@ -86,8 +89,9 @@ class EguanaModel(object):
             className = ffObject.__class__.__name__
             fileName = className[0].lower() + className[1:] + '.py'
 
+            configJsonArray = jsonData['configurations']
 
-            for i in jsonData:
+            for i in configJsonArray:
                 if i['machineName'] == machineFileName:
                     filterData = i['filterFunctions']
                     for j in filterData:
@@ -114,14 +118,15 @@ class EguanaModel(object):
 
             className = ffObjects.__class__.__name__
             fileName = className[0].lower() + className[1:] + '.py'
+            
+            configJsonArray = jsonData['configurations']
 
-
-            for i in jsonData:
+            for i in configJsonArray:
                 if i['machineName'] == machineFileName:
                     filterData = i['filterFunctions']
                     for j in filterData:
                             if j["filterApplicationName"] == fileName:
-                                jawFilters = self.getFilterTypeObjectsFromTypeNameArray(j["filterTypes"]["jawFilters"],'Jaw')
+                                jawFilters = self.getFilterTypeObjectsFromTypeNameArray(j["filterTypes"]["jawFilter"],'Jaw')
 
             return jawFilters
 

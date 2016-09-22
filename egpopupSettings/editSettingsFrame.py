@@ -4,16 +4,30 @@ from helpers.jsonHelper import getEnabledFilterFunctionsNameForMachineFilename a
 from helpers.jsonHelper import getEnabledHeadFilterFunctionFileNamesForMachineAndFilterFunctionFileNames as getEnabledHeadFilterFunctionFileNamesForMachineAndFilterFunctionFileNames
 from helpers.jsonHelper import getEnabledJawFilterFunctionFileNamesForMachineAndFilterFunctionFileNames as getEnabledJawFilterFunctionFileNamesForMachineAndFilterFunctionFileNames
 from helpers.jsonHelper import getEnabledMachineNameForFilterFunctionFilename as getEnabledMachineNameForFilterFunctionFilename
-from tkinter.ttk import Notebook
+from helpers.jsonHelper import getEnabledMachineNameForFilterTypeFilename as getEnabledMachineNameForFilterTypeFilename
+from helpers.jsonHelper import getEnabledFilterFunctionFileNamesForMachineAndFilterTypeFileNames as getEnabledFilterFunctionFileNamesForMachineAndFilterTypeFileNames
 
+from helpers.jsonHelper import removeMachineFromJSONForMachine as removeMachineFromJSONForMachine
+from helpers.jsonHelper import addMachineToJSON as addMachineToJSON
+
+from helpers.jsonHelper import removeFilterFunctionFromJSONForFilterFunction as removeFilterFunctionFromJSONForFilterFunction
+from helpers.jsonHelper import addFilterFunctionToJSON as addFilterFunctionToJSON
+
+
+from tkinter.ttk import Notebook
 from egpopupSettings.filterTypeCheckboxFrameForEdit import FilterTypeCheckboxFrameForEdit
+from egpopupSettings.filterFunctionCheckboxFrameForEdit import FilterFunctionCheckboxFrameForEdit
+
 
 class EditSettingsFrame(Frame):
-    def __init__(self,notebook):
+    def __init__(self,notebook,parent):
         Frame.__init__(self,notebook)
         self.currentTypeValue = None
         self.currentMachineTypeValue = None
         self.currentFilterFunctionValue = None
+        self.currentJawFilterTypeValue = None
+        self.currentHeadFilterTypeValue = None
+        self.parent = parent
 
     def setupFrame(self):
         dropList = ['Machine', 'Filter Function', 'Filter Type']
@@ -131,14 +145,23 @@ class EditSettingsFrame(Frame):
             enabledHeadFilenameList = []
 
             if isEnabled:
-
                 enabledJawFilenameList = getEnabledJawFilterFunctionFileNamesForMachineAndFilterFunctionFileNames(machineFilename,selectedFilterFunctionObject.getFilename())
                 enabledHeadFilenameList = getEnabledHeadFilterFunctionFileNamesForMachineAndFilterFunctionFileNames(machineFilename,selectedFilterFunctionObject.getFilename())
 
-                filterTypeFrame = FilterTypeCheckboxFrameForEdit(machineNotebook,headObjectList,jawObjectList,isEnabled,enabledJawFilenameList,enabledHeadFilenameList)
-                filterTypeFrameList.append(filterTypeFrame)
-                filterTypeFrame.pack(fill=BOTH, expand=True)
-                machineNotebook.add(filterTypeFrame, text=EguanaModel().getMachineObjectFromMachineName(machineFilename).name)
+            filterTypeFrame = FilterTypeCheckboxFrameForEdit(machineNotebook,headObjectList,jawObjectList,isEnabled,enabledJawFilenameList,enabledHeadFilenameList)
+            filterTypeFrameList.append(filterTypeFrame)
+            filterTypeFrame.pack(fill=BOTH, expand=True)
+            machineNotebook.add(filterTypeFrame, text=EguanaModel().getMachineObjectFromMachineName(machineFilename).name)
+
+        applyButton  = Button(self,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterFunctionButtonPressed(selectedFilterFunctionObject,filterTypeFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+
+
+    def applyFilterFunctionButtonPressed(self,selectedFilterFunctionObject,filterTypeFrameList):
+        removeFilterFunctionFromJSONForFilterFunction(selectedFilterFunctionObject)
+        addFilterFunctionToJSON(selectedFilterFunctionObject,filterTypeFrameList)
+
+        self.parent.destroy()        
+
 
 
     def machineSelectedFromOptionsMenu(self,value):
@@ -163,6 +186,7 @@ class EditSettingsFrame(Frame):
 
             if selectedMachine:
                 self.setupSelectedMachineConfig(selectedMachine)
+
 
 
 
@@ -202,6 +226,15 @@ class EditSettingsFrame(Frame):
             filterTypeFrameList.append(filterTypeFrame)
             filterTypeFrame.pack(fill=BOTH, expand=True)
             filterFunctionNotebook.add(filterTypeFrame, text=EguanaModel().getFilterObjectFromFunctionName(filterFunctionFilename).name)
+
+        applyButton  = Button(self,text='Apply & Close',relief=RAISED,command=lambda:self.applyMachineButtonPressed(selectedMachine,filterTypeFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+
+    def applyMachineButtonPressed(self, selectedMachine, filterTypeFrameList):
+
+        removeMachineFromJSONForMachine(selectedMachine)
+        addMachineToJSON(selectedMachine,filterTypeFrameList)
+
+        self.parent.destroy()
 
 
     def headCheckButtonPressed(self,headCheckButtonInt,jawCheckButtonInt):
@@ -249,7 +282,7 @@ class EditSettingsFrame(Frame):
 
         dropFtTitle = StringVar()
         dropFtTitle.set('Select Head Filter Type')
-        ftDropMenu = OptionMenu(self,dropFtTitle,*headFilterTypeNamelist,command=self.filterTypeSelectedFromOptionsMenu)
+        ftDropMenu = OptionMenu(self,dropFtTitle,*headFilterTypeNamelist,command=self.headFilterTypeSelectedFromOptionsMenu)
         ftDropMenu.grid(row=3, column=0, columnspan=4, sticky='ew')
 
     def setupJawDropDown(self):
@@ -261,10 +294,91 @@ class EditSettingsFrame(Frame):
 
         dropFtTitle = StringVar()
         dropFtTitle.set('Select Jaw Filter Type')
-        ftDropMenu = OptionMenu(self,dropFtTitle,*jawFilterTypeNamelist,command=self.filterTypeSelectedFromOptionsMenu)
+        ftDropMenu = OptionMenu(self,dropFtTitle,*jawFilterTypeNamelist,command=self.jawFilterTypeSelectedFromOptionsMenu)
         ftDropMenu.grid(row=3, column=0, columnspan=4, sticky='ew')
 
 
-    def filterTypeSelectedFromOptionsMenu(self):
+
+    def jawFilterTypeSelectedFromOptionsMenu(self,value):
+
+        if value != self.currentJawFilterTypeValue:
+            self.currentFilterFunctionValue = value
+
+            for i in range(4,self.grid_size()[1]): 
+                for element in self.grid_slaves(i,None):
+                    element.grid_forget()
+
+
+            filterTypeFilenameList = EguanaModel().getAllJawFilterTypes()
+            filterTypeObjectList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(filterTypeFilenameList,'Jaw')
+
+            selectedFilterType = None
+
+            for ftObject in filterTypeObjectList:
+
+                if ftObject.name == value:
+                    selectedFilterFunction = ftObject
+                    break
+
+            if selectedFilterFunction:
+                self.filterTypeSelectedFromOptionsMenu(selectedFilterFunction,'Jaw')
+
+
+    def headFilterTypeSelectedFromOptionsMenu(self,value):
+
+        if value != self.currentHeadFilterTypeValue:
+            self.currentHeadFilterTypeValue = value
+
+            for i in range(4,self.grid_size()[1]): 
+                for element in self.grid_slaves(i,None):
+                    element.grid_forget()
+
+
+            filterTypeFilenameList = EguanaModel().getAllHeadFilterTypes()
+            filterTypeObjectList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(filterTypeFilenameList,'Head')
+
+            selectedFilterType = None
+
+            for ftObject in filterTypeObjectList:
+
+                if ftObject.name == value:
+                    selectedFilterFunction = ftObject
+                    break
+
+            if selectedFilterFunction:
+                self.filterTypeSelectedFromOptionsMenu(selectedFilterFunction,'Head')
+
+
+    def filterTypeSelectedFromOptionsMenu(self,selectedFilterTypeObject,filterType):
+
+
+
+        filterFunctionNotebook = Notebook(self)
+        filterFunctionNotebook.grid(row=4, column=0,columnspan=4, sticky=E+W)
+
+
+        allFilterFunctionsFilenameList = EguanaModel().getAllFilterFunctions()
+        allFilterFunctionObjectList = EguanaModel().getFilterFunctionObjectsFromFunctionNameArray(allFilterFunctionsFilenameList)
+        allMachineNameList = EguanaModel().getAllMachines()
+
+        filterFunctionFrameList = []
+
+        enabledMachineNameList = getEnabledMachineNameForFilterTypeFilename(selectedFilterTypeObject.getFilename(),filterType)
+
+
+        for i in range(len(allMachineNameList)):
+
+            isEnabled = allMachineNameList[i] in enabledMachineNameList
+
+            if isEnabled:
+                enabledFilterFunctionFilenameList = getEnabledFilterFunctionFileNamesForMachineAndFilterTypeFileNames(allMachineNameList[i],selectedFilterTypeObject.getFilename(),filterType)
+
+                filterFunctionFrame = FilterFunctionCheckboxFrameForEdit(filterFunctionNotebook,allFilterFunctionObjectList,isEnabled,enabledFilterFunctionFilenameList)
+                filterFunctionFrame.pack(fill=BOTH, expand=True)
+                filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(allMachineNameList[i]).name)
+                filterFunctionFrameList.append(filterFunctionFrame)
+
+
+
         return
 
