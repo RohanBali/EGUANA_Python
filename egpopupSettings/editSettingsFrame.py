@@ -31,6 +31,7 @@ class EditSettingsFrame(Frame):
         self.currentFilterFunctionValue = None
         self.currentJawFilterTypeValue = None
         self.currentHeadFilterTypeValue = None
+        
         self.parent = parent
 
     def setupFrame(self):
@@ -325,11 +326,11 @@ class EditSettingsFrame(Frame):
             for ftObject in filterTypeObjectList:
 
                 if ftObject.name == value:
-                    selectedFilterFunction = ftObject
+                    selectedFilterType = ftObject
                     break
 
-            if selectedFilterFunction:
-                self.filterTypeSelectedFromOptionsMenu(selectedFilterFunction,'Jaw')
+            if selectedFilterType:
+                self.filterTypeSelectedFromOptionsMenu(selectedFilterType,'Jaw')
 
 
     def headFilterTypeSelectedFromOptionsMenu(self,value):
@@ -350,11 +351,11 @@ class EditSettingsFrame(Frame):
             for ftObject in filterTypeObjectList:
 
                 if ftObject.name == value:
-                    selectedFilterFunction = ftObject
+                    selectedFilterType = ftObject
                     break
 
-            if selectedFilterFunction:
-                self.filterTypeSelectedFromOptionsMenu(selectedFilterFunction,'Head')
+            if selectedFilterType:
+                self.filterTypeSelectedFromOptionsMenu(selectedFilterType,'Head')
 
 
     def filterTypeSelectedFromOptionsMenu(self,selectedFilterTypeObject,filterType):

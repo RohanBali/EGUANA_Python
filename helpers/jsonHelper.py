@@ -248,13 +248,8 @@ def addFilterTypeToJSON(filterFunctionObject,filterTypeFrameList,filterType):
     
     atleastOneMachineEnabled = False
 
-    print(filterTypeFrameList)
 
     for machineDict in configArray:
-
-        print(machineDict['machineName'])
-        print(allMachineFilenameList.index(machineDict['machineName']))
-        print(filterTypeFrameList[allMachineFilenameList.index(machineDict['machineName'])])
 
         if filterTypeFrameList[allMachineFilenameList.index(machineDict['machineName'])].isEnabled():
 

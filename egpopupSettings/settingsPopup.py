@@ -11,6 +11,7 @@ from tests.machineConfigTest import MachineConfigTest
 from tests.filterConfigTest import FilterConfigTest
 from tests.filterTypesConfigTest import FilterTypesConfigTest
 from egpopupSettings.editSettingsFrame import EditSettingsFrame
+from egpopupSettings.deleteSettingsFrame import DeleteSettingsFrame
 
 class SettingsPopup(Toplevel):
 
@@ -35,9 +36,12 @@ class SettingsPopup(Toplevel):
         self.editFrame = EditSettingsFrame(self.modeNotebook,self)
         self.editFrame.pack(fill=BOTH, expand=True)
 
+        self.deleteFrame = DeleteSettingsFrame(self.modeNotebook,self)
+        self.deleteFrame.pack(fill=BOTH, expand=True)
+
         self.modeNotebook.add(self.addFrame, text='Add')
         self.modeNotebook.add(self.editFrame, text='Edit')
-         
+        self.modeNotebook.add(self.deleteFrame, text='Delete')
 
         self.editFrame.setupFrame()
 
