@@ -13,6 +13,10 @@ from helpers.jsonHelper import addMachineToJSON as addMachineToJSON
 from helpers.jsonHelper import removeFilterFunctionFromJSONForFilterFunction as removeFilterFunctionFromJSONForFilterFunction
 from helpers.jsonHelper import addFilterFunctionToJSON as addFilterFunctionToJSON
 
+from helpers.jsonHelper import removeFilterTypeFromJSONForFilterType as removeFilterTypeFromJSONForFilterType
+from helpers.jsonHelper import addFilterTypeToJSON as addFilterTypeToJSON
+
+
 
 from tkinter.ttk import Notebook
 from egpopupSettings.filterTypeCheckboxFrameForEdit import FilterTypeCheckboxFrameForEdit
@@ -249,6 +253,8 @@ class EditSettingsFrame(Frame):
             for element in self.grid_slaves(i,None):
                 element.grid_forget()
 
+        self.currentHeadFilterTypeValue = None
+        self.currentJawFilterTypeValue = None
 
         if headCheckButtonInt.get():
             self.setupHeadDropDown()
@@ -267,6 +273,8 @@ class EditSettingsFrame(Frame):
             for element in self.grid_slaves(i,None):
                 element.grid_forget()
 
+        self.currentHeadFilterTypeValue = None
+        self.currentJawFilterTypeValue = None
 
         if headCheckButtonInt.get():
             self.setupHeadDropDown()
@@ -352,7 +360,6 @@ class EditSettingsFrame(Frame):
     def filterTypeSelectedFromOptionsMenu(self,selectedFilterTypeObject,filterType):
 
 
-
         filterFunctionNotebook = Notebook(self)
         filterFunctionNotebook.grid(row=4, column=0,columnspan=4, sticky=E+W)
 
@@ -369,16 +376,29 @@ class EditSettingsFrame(Frame):
         for i in range(len(allMachineNameList)):
 
             isEnabled = allMachineNameList[i] in enabledMachineNameList
+            
+            enabledFilterFunctionFilenameList = [] 
 
             if isEnabled:
                 enabledFilterFunctionFilenameList = getEnabledFilterFunctionFileNamesForMachineAndFilterTypeFileNames(allMachineNameList[i],selectedFilterTypeObject.getFilename(),filterType)
 
-                filterFunctionFrame = FilterFunctionCheckboxFrameForEdit(filterFunctionNotebook,allFilterFunctionObjectList,isEnabled,enabledFilterFunctionFilenameList)
-                filterFunctionFrame.pack(fill=BOTH, expand=True)
-                filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(allMachineNameList[i]).name)
-                filterFunctionFrameList.append(filterFunctionFrame)
+            filterFunctionFrame = FilterFunctionCheckboxFrameForEdit(filterFunctionNotebook,allFilterFunctionObjectList,isEnabled,enabledFilterFunctionFilenameList)
+            filterFunctionFrame.pack(fill=BOTH, expand=True)
+            filterFunctionNotebook.add(filterFunctionFrame, text=EguanaModel().getMachineObjectFromMachineName(allMachineNameList[i]).name)
+            filterFunctionFrameList.append(filterFunctionFrame)
+
+
+        applyButton  = Button(self,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterTypeButtonPressed(selectedFilterTypeObject,filterFunctionFrameList,filterType)).grid(row=5,column=1,columnspan=1,sticky=S+E)
 
 
 
-        return
+    def applyFilterTypeButtonPressed(self,selectedFilterTypeObject,filterFunctionFrameList,filterType):
+
+        removeFilterTypeFromJSONForFilterType(selectedFilterTypeObject,filterType)
+
+        addFilterTypeToJSON(selectedFilterTypeObject,filterFunctionFrameList,filterType)
+        
+        self.parent.destroy()          
+
+
 
