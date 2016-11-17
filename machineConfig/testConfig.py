@@ -8,11 +8,10 @@ Created on Wed Aug  3 11:01:25 2016
 from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 
 class TestConfig(EguanaMachineConfig):
-    
+    name = 'Test'
+
     def __init__(self):
         EguanaMachineConfig.__init__(self)   
-        self.buttonName = "Select Directory for the test system"
-        self.name = "Test"
     
     def readHeadFile(self,filename):
         return 1

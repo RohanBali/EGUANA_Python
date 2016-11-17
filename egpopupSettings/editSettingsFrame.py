@@ -35,7 +35,7 @@ class EditSettingsFrame(Frame):
         self.parent = parent
 
     def setupFrame(self):
-        dropList = ['Machine', 'Filter Function', 'Filter Type']
+        dropList = ['Machine', 'Filter Type', 'Module']
         dropTitle = StringVar()
         dropTitle.set('Select Type')
         drop = OptionMenu(self,dropTitle,*dropList, command=self.selectTypeCallback)
@@ -76,18 +76,7 @@ class EditSettingsFrame(Frame):
                 machineDropMenu.grid(row=2, column=0, columnspan=4, sticky='ew')
 
 
-            elif value == 'Filter Function':
-                filterFunctionFilenameList = EguanaModel().getAllFilterFunctions()
-                filterFunctionsObjectList = EguanaModel().getFilterFunctionObjectsFromFunctionNameArray(filterFunctionFilenameList)
-
-                filterFunctionNameList = [ffObject.name for ffObject in filterFunctionsObjectList]
-
-                dropFFTitle = StringVar()
-                dropFFTitle.set('Select Filter Function')
-                ffDropMenu = OptionMenu(self,dropFFTitle,*filterFunctionNameList,command=self.filterFunctionSelectedFromOptionsMenu)
-                ffDropMenu.grid(row=2, column=0, columnspan=4, sticky='ew')
-
-            else: #'Filter Type'
+            elif value == 'Filter Type':
                 headCheckButtonInt = IntVar()
                 headCheckButtonInt.set(1)
                 jawCheckButtonInt = IntVar()
@@ -97,30 +86,10 @@ class EditSettingsFrame(Frame):
 
                 self.setupHeadDropDown()
 
-    def filterFunctionSelectedFromOptionsMenu(self,value):
-        
-        if value != self.currentFilterFunctionValue:
-
-            self.currentFilterFunctionValue = value
-
-            for i in range(3,self.grid_size()[1]): 
-                for element in self.grid_slaves(i,None):
-                    element.grid_forget()
+            else: #'Module'
+                return 0
 
 
-        filterFunctionFilenameList = EguanaModel().getAllFilterFunctions()
-        filterFunctionsObjectList = EguanaModel().getFilterFunctionObjectsFromFunctionNameArray(filterFunctionFilenameList)
-
-        selectedFilterFunction = None
-
-        for ffObject in filterFunctionsObjectList:
-
-            if ffObject.name == value:
-                selectedFilterFunction = ffObject
-                break
-
-        if selectedFilterFunction:
-            self.setupSelectedFilterConfig(selectedFilterFunction)
 
 
     def setupSelectedFilterConfig(self,selectedFilterFunctionObject):
@@ -160,12 +129,7 @@ class EditSettingsFrame(Frame):
 
         applyButton  = Button(self,text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterFunctionButtonPressed(selectedFilterFunctionObject,filterTypeFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
 
-
-    def applyFilterFunctionButtonPressed(self,selectedFilterFunctionObject,filterTypeFrameList):
-        removeFilterFunctionFromJSONForFilterFunction(selectedFilterFunctionObject)
-        addFilterFunctionToJSON(selectedFilterFunctionObject,filterTypeFrameList)
-
-        self.parent.destroy()        
+    
 
 
 

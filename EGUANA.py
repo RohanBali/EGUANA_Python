@@ -97,7 +97,7 @@ class EguanaGUI(Frame):
                 
                 if not(j == 1 and i == int(numRows/2)) and (index < numDevices):
                     device = self.supportedDevices[index]
-                    b = Button(self.selectMachineFrame,text=device.buttonName,relief=RAISED, command=lambda device=device :self.machineButtonPressed(device))
+                    b = Button(self.selectMachineFrame,text=device.name,relief=RAISED, command=lambda device=device :self.machineButtonPressed(device))
                     b.grid(row=i,column=j, sticky=N+S+E+W,padx=2,pady =2)
                     index += 1
 

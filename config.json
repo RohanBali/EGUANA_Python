@@ -1,82 +1,49 @@
 {
-  "configurations": [
+  "machineConfig": [
     {
       "machineName": "threeDConfig.py",
-      "filterFunctions": [
-        {
-          "filterApplicationName": "speech3DFilterConfig.py",
-          "filterTypes": {
-            "headFilters": [
-              "cKroosFilter.py",
-              "posFilter.py",
-              "rHenriquesFilter.py"
-            ],
-            "jawFilter": [
-              "joanaFilter.py",
-              "goldFilter.py",
-              "erFilter.py",
-              "ssFilter.py"
-            ]
-          }
-        },
-        {
-          "filterApplicationName": "swallow3DFilterConfig.py",
-          "filterTypes": {
-            "headFilters": [
-              "cKroosFilter.py",
-              "posFilter.py",
-              "rHenriquesFilter.py"
-            ],
-            "jawFilter": [
-              "joanaFilter.py",
-              "goldFilter.py",
-              "erFilter.py",
-              "ssFilter.py"
-            ]
-          }
-        }
-      ]
+      "groups": ["3D"]
     },
     {
       "machineName": "twoDConfig.py",
-      "filterFunctions": [
-        {
-          "filterApplicationName": "speech2DFilterConfig.py",
-          "filterTypes": {
-            "headFilters": [
-              "cKroosFilter.py",
-              "posFilter.py",
-              "rHenriquesFilter.py"
-            ],
-            "jawFilter": [
-              "joanaFilter.py",
-              "goldFilter.py",
-              "erFilter.py",
-              "ssFilter.py"            
-            ]
-          }
-        },
-        {
-          "filterApplicationName": "swallow2DFilterConfig.py",
-          "filterTypes": {
-            "headFilters": [
-              "cKroosFilter.py",
-              "posFilter.py",
-              "rHenriquesFilter.py"
-            ],
-            "jawFilter": [
-              "joanaFilter.py",
-              "goldFilter.py",
-              "erFilter.py",
-              "ssFilter.py"
-            ]
-          }
-        }
-      ]
+      "groups": []
+    },
+    {
+      "machineName": "apasConfig.py",
+      "groups": []
+    },
+    {
+      "machineName": "testConfig.py",
+      "groups": []
     }
   ],
-  "allMachines":["threeDConfig.py","apasConfig.py","testConfig.py","twoDConfig.py"],
-  "allFilterFunctions":["speech2DFilterConfig.py","speech3DFilterConfig.py","swallow2DFilterConfig.py","swallow3DFilterConfig.py"],
-  "allHeadFilterTypes":["cKroosFilter.py","posFilter.py","rHenriquesFilter.py"],
-  "allJawFilterTypes":["goldFilter.py","ssFilter.py","joanaFilter.py","erFilter.py"]
+  "groupConfig": [
+    {
+      "groupName": "3D",
+      "headFilters": ["cKroosFilter.py"],
+      "jawFilters": [ "goldFilter.py","ssFilter.py"],
+      "modules": ["stiModule.py"]
+    }
+  ],
+  "allMachines": [
+    "threeDConfig.py",
+    "apasConfig.py",
+    "testConfig.py",
+    "twoDConfig.py"
+  ],
+  "allGroups": [
+    "3D"
+  ],
+  "allHeadFilterTypes": [
+    "cKroosFilter.py",
+    "posFilter.py",
+    "rHenriquesFilter.py"
+  ],
+  "allJawFilterTypes": [
+    "goldFilter.py",
+    "ssFilter.py",
+    "joanaFilter.py",
+    "erFilter.py"
+  ],
+  "allModules": ["stiModule.py"]
 }

@@ -8,12 +8,11 @@ from tkinter import  DISABLED, NORMAL
 import sys
 
 class EguanaMachineConfig():
-
+    name = ""
+    
     def __init__(self):
-        self.buttonName = ""
         self.setupPlotAndFilterStates()
         self.dirPath = ""
-        self.name = ""
 
 
     def setupPlotAndFilterStates(self):

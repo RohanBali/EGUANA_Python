@@ -2,6 +2,50 @@ import json
 from eguanaModel import EguanaModel
 
 
+def getAllGroups():
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    return configJSONDict["allGroups"]    
+
+def getHeadFiltersListForGroup(groupName):
+    
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigArray = configJSONDict['groupConfig']
+
+    for groupDict in groupConfigArray:
+        if groupDict['groupName'] == groupName:
+            return groupDict["headFilters"]
+
+    return []
+
+
+def getJawFiltersListForGroup(groupName):
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigArray = configJSONDict['groupConfig']
+
+    for groupDict in groupConfigArray:
+        if groupDict['groupName'] == groupName:
+            return groupDict["jawFilters"]
+
+    return []
+    
+def getModuleListForGroup(groupName):
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigArray = configJSONDict['groupConfig']
+    
+    for groupDict in groupConfigArray:
+        if groupDict['groupName'] == groupName:
+            return groupDict["modules"]
+
+    return []
+
 def getEnabledFilterFunctionsNameForMachineFilename(machineFilename):
 
 	with open("./config.json", 'r') as f:
@@ -229,65 +273,46 @@ def removeFilterTypeFromJSONForFilterType(selectedFilterTypeObject,filterType):
         json.dump(configJSONDict,f)
 
 
-def addFilterTypeToJSON(filterFunctionObject,filterTypeFrameList,filterType):
-     
-    filterTypeJsonName = 'headFilters'
-    allFilterTypeJsonName = 'allHeadFilterTypes'
-
-    if filterType == 'Jaw':
-        filterTypeJsonName = 'jawFilter'
-        allFilterTypeJsonName = 'allJawFilterTypes'
-
+def addFilterTypeToJSON(fileName,groupNameList,filterType):
 
     with open("./config.json", 'r') as f:
         configJSONDict = json.loads(f.read())
 
-    configArray = configJSONDict["configurations"]
+    groupConfigArray = configJSONDict["groupConfig"]
 
-    allMachineFilenameList = EguanaModel().getAllMachines()
-    
-    atleastOneMachineEnabled = False
+    for groupConfigDict in groupConfigArray:
+        if groupConfigDict["groupName"] in groupNameList:
+            filterList = groupConfigDict["headFilters"]
+            if filterType == 'Jaw':
+                filterList = groupConfigDict["jawFilters"]
+            filterList.append(fileName)
 
+    allFilterList = configJSONDict["allHeadFilterTypes"]
+    if filterType == 'Jaw':
+        allFilterList = configJSONDict["allJawFilterTypes"]
 
-    for machineDict in configArray:
-
-        if filterTypeFrameList[allMachineFilenameList.index(machineDict['machineName'])].isEnabled():
-
-            enabledFfFilenameList = filterTypeFrameList[allMachineFilenameList.index(machineDict['machineName'])].getEnabledFilterFunctionNames()
-
-            for ffFileName in enabledFfFilenameList:
-
-                atleastOneMachineEnabled = True
-
-                ffDict = None
-
-                for ffDictTmp in machineDict['filterFunctions']:
-                    if ffFileName in ffDictTmp['filterApplicationName']:
-                        ffDict = ffDictTmp
-                        break
-
-                if ffDict == None:
-                    newFilterFunctionDict = {}
-                    newFilterFunctionDict['filterApplicationName'] = ffFileName
-                    filterTypesDict = {}
-                    filterTypesDict['headFilters'] = []
-                    filterTypesDict['jawFilters'] = []
-                    filterTypesDict[filterTypeJsonName].append(filterFunctionObject.getFilename())
-                    newFilterFunctionDict['filterTypes'] = filterTypesDict
-                    filterFunctionsArray = machineDict['filterFunctions']
-                    filterFunctionsArray.append(newFilterFunctionDict)
-                else:
-                    ffDict['filterTypes'][filterTypeJsonName].append(filterFunctionObject.getFilename())
-
-
-    if atleastOneMachineEnabled:
-        configJSONDict[allFilterTypeJsonName].append(filterFunctionObject.getFilename())
-
+    allFilterList.append(fileName)
 
     with open("./config.json", 'w') as f:
         json.dump(configJSONDict,f)
 
+def addModuleToJSON(fileName,groupNameList):
 
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigArray = configJSONDict["groupConfig"]
+
+    for groupConfigDict in groupConfigArray:
+        if groupConfigDict["groupName"] in groupNameList:
+            moduleList = groupConfigDict["modules"]
+            moduleList.append(fileName)
+
+    allModuleList = configJSONDict["allModules"]
+    allModuleList.append(fileName)
+
+    with open("./config.json", 'w') as f:
+        json.dump(configJSONDict,f)
 
 def addFilterFunctionToJSON(filterFunctionObject,filterTypeFrameList):
         
@@ -322,43 +347,23 @@ def addFilterFunctionToJSON(filterFunctionObject,filterTypeFrameList):
         json.dump(configJSONDict,f)
 
 
-def addMachineToJSON(selectedMachine,filterTypeFrameList):
+def addMachineToJSON(machineFilename,groupNamesList):
 
 
     with open("./config.json", 'r') as f:
         configJSONDict = json.loads(f.read())
 
-    configArray = configJSONDict["configurations"]
-    allFilterFunctionFunctionNameList = EguanaModel().getAllFilterFunctions()
-
     newMachineDict = {}
+    newMachineDict["machineName"] = machineFilename
+    newMachineDict["groups"] = groupNamesList
 
-    newMachineDict["machineName"] = selectedMachine.getFilename()
+    machineConfigArray = configJSONDict["machineConfig"]
 
-    newFilterFunctionsList = []
-
-    for i in range(len(filterTypeFrameList)):
-        if filterTypeFrameList[i].isEnabled():
-            newFilterFunctionDict = {}
-            newFilterFunctionDict["filterApplicationName"] =  EguanaModel().getFilterObjectFromFunctionName(allFilterFunctionFunctionNameList[i]).getFilename()
-
-            filterTypesDict = {}
-
-            filterTypesDict['headFilters'] = filterTypeFrameList[i].getEnabledHeadFilterTypeNames()
-            filterTypesDict['jawFilters'] = filterTypeFrameList[i].getEnabledJawFilterTypeNames()
-
-            newFilterFunctionDict['filterTypes'] = filterTypesDict
-            newFilterFunctionsList.append(newFilterFunctionDict)
-
-    newMachineDict['filterFunctions'] = newFilterFunctionsList
-    configArray.append(newMachineDict)
+    machineConfigArray.append(newMachineDict)
 
     allMachinesList = configJSONDict["allMachines"]
-    allMachinesList.append(selectedMachine.getFilename())
-
+    allMachinesList.append(machineFilename)
 
     with open("./config.json", 'w') as f:
-    	json.dump(configJSONDict,f)
-
-
+        json.dump(configJSONDict,f)
 

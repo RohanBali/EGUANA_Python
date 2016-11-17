@@ -17,12 +17,12 @@ from tkinter import  DISABLED, NORMAL
 import numpy
 
 class TwoDConfig(EguanaMachineConfig):
+    name = "2D EMA"
     
     def __init__(self):
         EguanaMachineConfig.__init__(self)   
         self.buttonName = "Select Directory for 2D EMA"
         self.posPath = ""
-        self.name = "2D EMA"
 
     def setupPlotAndFilterStates(self):
         self.plot3DKButtonState = 'disabled'

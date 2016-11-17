@@ -1,9 +1,8 @@
 import sys
 
-class EguanaFilterTypesConfig():
+class EguanaModuleConfig():
 
 	name = ""
-	filterType = ""
 
 	def __init__(self):
 		return
