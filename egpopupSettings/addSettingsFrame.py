@@ -1,4 +1,22 @@
 from tkinter import *
+from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W, SUNKEN, Label, OptionMenu, BOTH, messagebox
+from tkinter.ttk import Notebook
+
+import subprocess
+import os.path
+import json
+
+from eguanaModel import EguanaModel
+
+from tests.machineConfigTest import MachineConfigTest
+from tests.filterTypesConfigTest import FilterTypesConfigTest
+
+from egpopupSettings.filterTypeCheckboxFrame import FilterTypeCheckboxFrame
+from egpopupSettings.filterFunctionCheckboxFrame import FilterFunctionCheckboxFrame
+
+from egpopupSettings.groupDescriptionCheckboxFrame import GroupDescriptionCheckboxFrame
+
+from helpers import jsonHelper
 
 class AddSettingsFrame(Frame):
 
@@ -190,7 +208,7 @@ class AddSettingsFrame(Frame):
         jsonHelper.addMachineToJSON(fileName,groupNameList)
 
         subprocess.call('cp '+filePath+' ./machineConfig/', shell=True)
-        self.destroy()
+        self.parent.destroy()
 
     def applyFilterTypeButtonPressed(self, filePath, groupDescriptionFrameList, filterType):
         components = filePath.split('/')
@@ -209,7 +227,7 @@ class AddSettingsFrame(Frame):
         else:
             subprocess.call('cp '+filePath+' ./filterTypesConfig/jawFilters/', shell=True)
 
-        self.destroy()
+        self.parent.destroy()
 
     def applyModuleButtonPressed(self, filePath, groupDescriptionFrameList):
         components = filePath.split('/')
@@ -224,4 +242,4 @@ class AddSettingsFrame(Frame):
         jsonHelper.addModuleToJSON(fileName,groupNameList)
 
         subprocess.call('cp '+filePath+' ./moduleConfig/', shell=True)
-        self.destroy()
+        self.parent.destroy()
