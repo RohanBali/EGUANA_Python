@@ -100,7 +100,7 @@ class AddSettingsFrame(Frame):
                         groupDescriptionFrame.pack(fill=BOTH, expand=True)
                         groupDesctiptionNotebook.add(groupDescriptionFrame, text=tabName)
                       
-                    Button(self.addFrame,text='Apply & Close', relief=RAISED, command=lambda: self.applyMachineButtonPressed(filePath, groupDescriptionFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+                    Button(self, text='Apply & Close', relief=RAISED, command=lambda: self.applyMachineButtonPressed(filePath, groupDescriptionFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
                 
                 else:
                     messagebox.showinfo("Error", errorString)
@@ -207,7 +207,7 @@ class AddSettingsFrame(Frame):
 
         jsonHelper.addMachineToJSON(fileName,groupNameList)
 
-        subprocess.call('cp '+filePath+' ./machineConfig/', shell=True)
+        subprocess.call('cp \"'+filePath+'\" ./machineConfig/', shell=True)
         self.parent.destroy()
 
     def applyFilterTypeButtonPressed(self, filePath, groupDescriptionFrameList, filterType):
@@ -223,9 +223,9 @@ class AddSettingsFrame(Frame):
         jsonHelper.addFilterTypeToJSON(fileName,groupNameList,filterType)
 
         if filterType == 'Head':
-            subprocess.call('cp '+filePath+' ./filterTypesConfig/headFilters/', shell=True)
+            subprocess.call('cp \"'+filePath+'\" ./filterTypesConfig/headFilters/', shell=True)
         else:
-            subprocess.call('cp '+filePath+' ./filterTypesConfig/jawFilters/', shell=True)
+            subprocess.call('cp \"'+filePath+'\" ./filterTypesConfig/jawFilters/', shell=True)
 
         self.parent.destroy()
 
@@ -241,5 +241,5 @@ class AddSettingsFrame(Frame):
 
         jsonHelper.addModuleToJSON(fileName,groupNameList)
 
-        subprocess.call('cp '+filePath+' ./moduleConfig/', shell=True)
+        subprocess.call('cp \"'+filePath+'\" ./moduleConfig/', shell=True)
         self.parent.destroy()
