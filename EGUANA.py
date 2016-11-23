@@ -30,6 +30,20 @@ import math
 
 from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 
+class EguanaInit(object):
+    @staticmethod
+    def eguana_root_dir_exists():
+        drive_name = os.path.splitdrive(sys.executable)[0]
+        is_unix    = drive_name == ''
+        is_windows = not is_unix
+
+        if is_unix:
+            eguana_root_dir = '/eguana'
+        else:
+            eguana_root_dir = drive_name+"\\\\eguana"
+
+        return os.path.exists(eguana_root_dir)
+
 class EguanaGUI(Frame):
   
     def __init__(self, parent):
@@ -37,7 +51,6 @@ class EguanaGUI(Frame):
          
         self.parent = parent
         self.initUI()
-
         
     def initUI(self):
       
