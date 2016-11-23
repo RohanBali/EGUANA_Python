@@ -30,6 +30,32 @@ import math
 
 from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 
+class EguanaInit(object):
+    @staticmethod
+    def get_eguana_root_dir_name():
+        drive_name = os.path.splitdrive(sys.executable)[0]
+        is_unix    = drive_name == ''
+        is_windows = not is_unix
+
+        if is_unix:
+            eguana_root_dir = '/eguana'
+        else:
+            eguana_root_dir = drive_name+"\\\\eguana"
+        return eguana_root_dir
+    
+    @staticmethod
+    def eguana_root_dir_exists():
+        eguana_dir_name = EguanaInit.get_eguana_root_dir_name()
+        return os.path.exists(eguana_dir_name)
+
+    # To do
+    @staticmethod
+    def create_eguana_root_dir():
+        eguana_dir_name = EguanaInit.get_eguana_root_dir_name()
+        #os.makedirs(eguana_dir_name)
+        #os.chown(eguana_dir_name, int(os.getenv('SUDO_UID')), int(os.getenv('SUDO_GID')))
+        print(os.getenv("SUDO_USER"))
+
 class EguanaGUI(Frame):
   
     def __init__(self, parent):
@@ -38,6 +64,8 @@ class EguanaGUI(Frame):
         self.parent = parent
         self.initUI()
 
+        # if not EguanaInit.eguana_root_dir_exists():
+        #     EguanaInit.create_eguana_root_dir()
         
     def initUI(self):
       
@@ -68,8 +96,11 @@ class EguanaGUI(Frame):
             components = fileName.split('.')
             fileName = components[0]
             className = fileName[0].upper() + fileName[1:]
-            module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
-            classVar = getattr(module,className)
+            try:
+                module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
+                classVar = getattr(module,className)
+            except:
+                continue
             self.supportedDevices.append(classVar())
             # except:
             #     pass
