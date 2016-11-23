@@ -20,15 +20,6 @@ class EguanaModel(object):
             
             return filterFunctionFilenameList
 
-        def getAllMachines(self):
-            #gets all machine filenames
-
-            with open('config.json') as data_file:    
-                data = json.load(data_file)
-
-            machineFilenameList = data['allMachines']
-            
-            return machineFilenameList
 
         def getAllHeadFilterTypes(self):
 

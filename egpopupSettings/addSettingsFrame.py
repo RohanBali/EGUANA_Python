@@ -100,7 +100,7 @@ class AddSettingsFrame(Frame):
                         groupDescriptionFrame.pack(fill=BOTH, expand=True)
                         groupDesctiptionNotebook.add(groupDescriptionFrame, text=tabName)
                       
-                    Button(self.addFrame,text='Apply & Close', relief=RAISED, command=lambda: self.applyMachineButtonPressed(filePath, groupDescriptionFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+                    Button(self,text='Apply & Close', relief=RAISED, command=lambda: self.applyMachineButtonPressed(filePath, groupDescriptionFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
                 
                 else:
                     messagebox.showinfo("Error", errorString)

@@ -26,3 +26,14 @@ def getModuleNameFromModuleFilename(moduleFilename):
     module = __import__("moduleConfig."+fileName,fromlist=["moduleConfig."])                        
     classVar = getattr(module,className)
     return classVar.name    
+
+
+def getMachineNameFromMachineFilename(machineFilename):
+    components = machineFilename.split('.')
+    fileName = components[0]
+    className = fileName[0].upper() + fileName[1:]
+
+    module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
+    classVar = getattr(module,className)
+    return classVar.name    
+
