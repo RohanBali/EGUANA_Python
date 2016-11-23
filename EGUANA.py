@@ -68,8 +68,11 @@ class EguanaGUI(Frame):
             components = fileName.split('.')
             fileName = components[0]
             className = fileName[0].upper() + fileName[1:]
-            module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
-            classVar = getattr(module,className)
+            try:
+                module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
+                classVar = getattr(module,className)
+            except:
+                continue
             self.supportedDevices.append(classVar())
             # except:
             #     pass
