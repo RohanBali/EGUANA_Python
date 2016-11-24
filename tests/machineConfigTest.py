@@ -23,6 +23,7 @@ class MachineConfigTest():
 		else:
 			self.testClass = None
 
+	oldCode='''
 	def runTests(self):
 
 		errorString = ""
@@ -109,12 +110,46 @@ class MachineConfigTest():
 
 
 		return [True,'']
+'''
 
+	def runTests(self):
 
+		errorMessageList=[]
+		functionNameTuple=('isDirectoryValid','ifTrialExists','getDataForTrialNumber')
+		functionArgumentTuple=('',0,0)
+		functionExpectedReturnValueTuple=(type(False),type(False),type([]))
+		baseClass = EguanaMachineConfig()
 
+		for functionIndex in range(0,3):
+			currentFunctionName=functionNameTuple[functionIndex]
+			currentFunctionArgument=functionArgumentTuple[functionIndex]
+			currentFunctionExpectedReturnType=functionExpectedReturnValueTuple[functionIndex]
+			baseFunction = getattr(baseClass,currentFunctionName)
+			currFunction = getattr(self.testClass,currentFunctionName)
+			if baseFunction.__func__ is not currFunction.__func__:
+				try:
+					currentTestReturnValue=getattr(self.testClass,currentFunctionName)(currentFunctionArgument)
+					if type(currentTestReturnValue) is not currentFunctionExpectedReturnType:
+						currentErrorMessage = currentFunctionName + ' do not return expected type'
+						errorMessageList.append(currentErrorMessage)
 
+				except Exception as e:
+					currentErrorMessage = currentFunctionName + ' raises exception in testing (' + str(e) + ')'
+					errorMessageList.append(currentErrorMessage)
 
+			else:
+				currentErrorMessage = currentFunctionName + ' is not overwritten'
+				errorMessageList.append(currentErrorMessage)
+		
+		#empty list is false
+		if errorMessageList:
+			errorMessage = str(len(errorMessageList)) + ' error(s) in total:'
+			for currentMessage in errorMessageList:
+				errorMessage += ' ' + currentMessage
 
+			return [False,errorMessage]
+		else:
+			return [True,'']
 
 
 

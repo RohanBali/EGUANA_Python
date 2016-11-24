@@ -11,20 +11,8 @@ class EguanaMachineConfig():
     name = ""
     
     def __init__(self):
-        self.setupPlotAndFilterStates()
+        #self.setupPlotAndFilterStates()
         self.dirPath = ""
-
-
-    def setupPlotAndFilterStates(self):
-        self.plot3DKButtonState = 'normal'
-        self.plot3DDstButtonState = 'normal'
-        self.plot3DDpButtonState = 'normal'
-        self.plot2DKButtonState = 'normal'
-        self.plot2DDstButtonState = 'normal'
-        self.plot2DDpButtonState = 'normal'
-                
-    def whatsMyName(self):
-        print("EguanaMachineConfig")
         
     def isDirectoryValid(self, path):
         return
@@ -32,12 +20,11 @@ class EguanaMachineConfig():
     def ifTrialExists(self, trialNum):
         return
 
-    def setDirPath(self,path):
-        self.dirPath = path   
-
-
     def getDataForTrialNumber(self,trailNum):
         return
+
+    def setDirPath(self,path):
+        self.dirPath = path
 
     def getFilename(self):
         fullPath =  sys.modules[self.__class__.__module__].__file__
