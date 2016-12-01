@@ -31,11 +31,11 @@ class GroupDescriptionCheckboxFrame(Frame):
             self.rowconfigure(2+i,weight=1)
 
         for i in range(len(jawFilterList)):
-            Label(self,text=objectHelper.getJawFilterNameFromJawFilterFilename(jawFilterList[i])).grid(row=2+i,column=0,sticky=N+S+E+W)
+            Label(self,text=objectHelper.getJawFilterNameFromJawFilterFilename(jawFilterList[i])).grid(row=2+i,column=1,sticky=N+S+E+W)
             self.rowconfigure(2+i,weight=1)
 
         for i in range(len(moduleList)):
-            Label(self,text=objectHelper.getModuleNameFromModuleFilename(moduleList[i])).grid(row=2,column=0,sticky=N+S+E+W)
+            Label(self,text=objectHelper.getModuleNameFromModuleFilename(moduleList[i])).grid(row=2+i,column=2,sticky=N+S+E+W)
             self.rowconfigure(2+i,weight=1)
 
 

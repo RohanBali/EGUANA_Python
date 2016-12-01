@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import Toplevel, RAISED, Button, TOP, X, NORMAL, DISABLED, S, N, E, W, SUNKEN, Label, OptionMenu, BOTH, messagebox
 from tkinter.ttk import Notebook
 
 import subprocess
@@ -11,12 +10,12 @@ from eguanaModel import EguanaModel
 from tests.machineConfigTest import MachineConfigTest
 from tests.filterTypesConfigTest import FilterTypesConfigTest
 
-from egpopupSettings.filterTypeCheckboxFrame import FilterTypeCheckboxFrame
-from egpopupSettings.filterFunctionCheckboxFrame import FilterFunctionCheckboxFrame
-
 from egpopupSettings.groupDescriptionCheckboxFrame import GroupDescriptionCheckboxFrame
-
+from egpopupSettings.groupEditCheckboxFrame import GroupEditCheckboxFrame
 from helpers import jsonHelper
+
+GROUP_DEFAULT_STRING = "Enter your group name"
+
 
 class AddSettingsFrame(Frame):
 
@@ -24,7 +23,6 @@ class AddSettingsFrame(Frame):
         Frame.__init__(self,notebook)
         
         self.parent = parent
-        
         self.currentTypeValue = None
         self.currentMachineTypeValue = None
         self.currentFilterFunctionValue = None
@@ -34,11 +32,11 @@ class AddSettingsFrame(Frame):
         self.setupFrame()
 
     def setupFrame(self):
-        dropList = ['Machine', 'Head Filter','Jaw Filter','Module']
+        dropList = ['Machine', 'Head Filter','Jaw Filter','Module','Group']
         dropTitle = StringVar()
         dropTitle.set('Select Type')
         drop = OptionMenu(self, dropTitle, *dropList, command=self.selectTypeCallback)
-        drop.grid(row=1, column=0, columnspan=4, sticky='ew')
+        drop.grid(row=0, column=0, columnspan=4, sticky='ew')
         
         self.currentValue = None
 
@@ -58,20 +56,21 @@ class AddSettingsFrame(Frame):
 
             if value == 'Machine':
                 loadButton = Button(self, text='Load config file', relief=RAISED, command=lambda: self.machineLoadButtonPressed(loadButton))
-                loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
+                loadButton.grid(row=1, column=0, columnspan=4, sticky=E+W)
 
             elif value == 'Head Filter':
                 loadButton = Button(self, text='Load config file', relief=RAISED, command=lambda:self.headFilterTypeLoadButtonPressed(loadButton))
-                loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
+                loadButton.grid(row=1, column=0, columnspan=4, sticky=E+W)
 
             elif value == 'Jaw Filter':
                 loadButton = Button(self, text='Load config file', relief=RAISED, command=lambda:self.jawFilterTypeLoadButtonPressed(loadButton))
-                loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
+                loadButton.grid(row=1, column=0, columnspan=4, sticky=E+W)
 
-            else:
+            elif value == 'Module':
                 loadButton = Button(self, text='Load config file', relief=RAISED, command=lambda:self.moduleLoadButtonPressed(loadButton))
-                loadButton.grid(row=2, column=0, columnspan=4, sticky=E+W)
-                return 0
+                loadButton.grid(row=1, column=0, columnspan=4, sticky=E+W)
+            else: #group
+                self.setupAddGroup();
 
     def machineLoadButtonPressed(self, loadButton):
         filePath = filedialog.askopenfilename(filetypes=[('Python file','*.py')])
@@ -88,7 +87,7 @@ class AddSettingsFrame(Frame):
                     loadButton.config(text=filePath)
 
                     groupDesctiptionNotebook = Notebook(self)
-                    groupDesctiptionNotebook.grid(row=3, column=0, columnspan=4, sticky=E+W)
+                    groupDesctiptionNotebook.grid(row=2, column=0, columnspan=4, sticky=E+W)
                     
 
                     tabNameList = jsonHelper.getAllGroups()
@@ -101,7 +100,7 @@ class AddSettingsFrame(Frame):
                         groupDesctiptionNotebook.add(groupDescriptionFrame, text=tabName)
                       
 
-                    Button(self, text='Apply & Close', relief=RAISED, command=lambda: self.applyMachineButtonPressed(filePath, groupDescriptionFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+                    Button(self, text='Apply & Close', relief=RAISED, command=lambda: self.applyMachineButtonPressed(filePath, groupDescriptionFrameList)).grid(row=3,column=1,columnspan=1,sticky=S+E)
                 
                 else:
                     messagebox.showinfo("Error", errorString)
@@ -149,7 +148,7 @@ class AddSettingsFrame(Frame):
 
     def filterTypeLoadButtonPressed(self, filePath,filterType):
         groupDesctiptionNotebook = Notebook(self)
-        groupDesctiptionNotebook.grid(row=3, column=0, columnspan=4, sticky=E+W)
+        groupDesctiptionNotebook.grid(row=2, column=0, columnspan=4, sticky=E+W)
 
         tabNameList = jsonHelper.getAllGroups()
         groupDescriptionFrameList = [];
@@ -160,7 +159,7 @@ class AddSettingsFrame(Frame):
             groupDescriptionFrame.pack(fill=BOTH, expand=True)
             groupDesctiptionNotebook.add(groupDescriptionFrame, text=tabName)
           
-        Button(self, text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterTypeButtonPressed(filePath, groupDescriptionFrameList, filterType)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+        Button(self, text='Apply & Close',relief=RAISED,command=lambda:self.applyFilterTypeButtonPressed(filePath, groupDescriptionFrameList, filterType)).grid(row=3,column=1,columnspan=1,sticky=S+E)
 
     def moduleLoadButtonPressed(self,loadButton):
         filePath = filedialog.askopenfilename(filetypes=[('Python file','*.py')])
@@ -177,7 +176,7 @@ class AddSettingsFrame(Frame):
                     loadButton.config(text=filePath)
 
                     groupDesctiptionNotebook = Notebook(self)
-                    groupDesctiptionNotebook.grid(row=3, column=0, columnspan=4, sticky=E+W)
+                    groupDesctiptionNotebook.grid(row=2, column=0, columnspan=4, sticky=E+W)
                     
                     tabNameList = jsonHelper.getAllGroups()
                     groupDescriptionFrameList = [];
@@ -188,7 +187,7 @@ class AddSettingsFrame(Frame):
                         groupDescriptionFrame.pack(fill=BOTH, expand=True)
                         groupDesctiptionNotebook.add(groupDescriptionFrame, text=tabName)
                       
-                    Button(self,text='Apply & Close',relief=RAISED, command=lambda: self.applyModuleButtonPressed(filePath, groupDescriptionFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+                    Button(self,text='Apply & Close',relief=RAISED, command=lambda: self.applyModuleButtonPressed(filePath, groupDescriptionFrameList)).grid(row=3,column=1,columnspan=1,sticky=S+E)
                 
                 else:
                     messagebox.showinfo("Error", errorString)
@@ -196,7 +195,17 @@ class AddSettingsFrame(Frame):
             else:
                 messagebox.showinfo("Error", "File already exists in moduleConfig directory: " + fileName)
 
+    def setupAddGroup(self):
+        
+        groupNameEntry = Entry(self,justify=CENTER);
+        groupNameEntry.insert(0, GROUP_DEFAULT_STRING)
+        groupNameEntry.grid(row=1,column=1,columnspan=2,sticky=E+W)
+        groupCheckboxFrame = GroupEditCheckboxFrame(self,jsonHelper.getAllHeadFiltersFileNames(),jsonHelper.getAllJawFiltersFileNames(),jsonHelper.getAllModulesFileNames())
+        groupCheckboxFrame.grid(row=2, column=0, columnspan=4, sticky=E+W+N+S)
+        Button(self,text='Apply & Close',relief=RAISED).grid(row=3,column=1,columnspan=1,sticky=S+E)
+
     def applyMachineButtonPressed(self, filePath, groupDescriptionFrameList):
+        
         components = filePath.split('/')
         fileName = components[-1]
 
