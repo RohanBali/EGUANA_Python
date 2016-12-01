@@ -1,9 +1,10 @@
 from tkinter import *
 from eguanaModel import EguanaModel
-from helpers.jsonHelper import removeMachineFromJSONForMachine as removeMachineFromJSONForMachine
-from helpers.jsonHelper import removeFilterFunctionFromJSONForFilterFunction as removeFilterFunctionFromJSONForFilterFunction
-from helpers.jsonHelper import removeFilterTypeFromJSONForFilterType as removeFilterTypeFromJSONForFilterType
-
+from helpers import jsonHelper
+from helpers import objectHelper
+from egpopupSettings.groupDescriptionCheckboxFrame import GroupDescriptionCheckboxFrame
+from tkinter.ttk import Notebook
+import os
 
 class DeleteSettingsFrame(Frame):
     def __init__(self,notebook,parent):
@@ -18,26 +19,22 @@ class DeleteSettingsFrame(Frame):
         self.setupFrame()
 
     def setupFrame(self):
-        dropList = ['Machine', 'Filter Function', 'Filter Type']
+        dropList = ['Machine', 'Head Filter','Jaw Filter','Module']
         dropTitle = StringVar()
         dropTitle.set('Select Type')
         drop = OptionMenu(self,dropTitle,*dropList, command=self.selectTypeCallback)
         drop.grid(row=0, column=0, columnspan=4, sticky='ew')
+        
+        for row in range(0, 5):
+            self.rowconfigure(row, weight=1)
 
-        self.rowconfigure(0,weight=1)
-        self.rowconfigure(1,weight=1)
-        self.rowconfigure(2,weight=1)
-        self.rowconfigure(3,weight=1)
-        self.rowconfigure(4,weight=1)
+        for col in range(0, 4):
+            self.columnconfigure(col, weight=1)
 
-        self.columnconfigure(0,weight=1)
-        self.columnconfigure(1,weight=1)
-        self.columnconfigure(2,weight=1)
-        self.columnconfigure(3,weight=1)
 
 
     def selectTypeCallback(self, value):
-
+        
         if value != self.currentTypeValue:
 
             self.currentTypeValue = value
@@ -47,67 +44,47 @@ class DeleteSettingsFrame(Frame):
                         element.grid_forget()
 
             if value == 'Machine':
-                machineNamesList = EguanaModel().getAllMachines()
-                machineNameList = [EguanaModel().getMachineObjectFromMachineName(machineFileName).name for machineFileName in machineNamesList]
-
-                dropMachineTitle = StringVar()
-                dropMachineTitle.set('Select Machine')
-                machineDropMenu = OptionMenu(self,dropMachineTitle,*machineNameList,command=self.machineSelectedFromOptionsMenu)
-                machineDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')
-
-
-            elif value == 'Filter Function':
-                filterFunctionFilenameList = EguanaModel().getAllFilterFunctions()
-                filterFunctionsObjectList = EguanaModel().getFilterFunctionObjectsFromFunctionNameArray(filterFunctionFilenameList)
-
-                filterFunctionNameList = [ffObject.name for ffObject in filterFunctionsObjectList]
-
-                dropFFTitle = StringVar()
-                dropFFTitle.set('Select Filter Function')
-                ffDropMenu = OptionMenu(self,dropFFTitle,*filterFunctionNameList,command=self.filterFunctionSelectedFromOptionsMenu)
-                ffDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')
-
-            else: #'Filter Type'
-                headCheckButtonInt = IntVar()
-                headCheckButtonInt.set(1)
-                jawCheckButtonInt = IntVar()
-
-                headCheckButton = Checkbutton(self, text='Head', variable=headCheckButtonInt, command=lambda:self.headCheckButtonPressed(headCheckButtonInt,jawCheckButtonInt)).grid(row=1, column=0, columnspan=1, sticky=N+E+W)
-                jawCheckButton = Checkbutton(self, text='Jaw', variable=jawCheckButtonInt, command=lambda:self.jawCheckButtonPressed(headCheckButtonInt,jawCheckButtonInt)).grid(row=1, column=2, columnspan=1, sticky=N+E+W)
-
+                self.setupMachineDropdown()           
+            elif value == 'Head Filter':
                 self.setupHeadDropDown()
+            elif value == 'Jaw Filter':
+                self.setupJawDropDown()
+            else: #'Module'
+                self.setupModuleDropdown()
 
-    def filterFunctionSelectedFromOptionsMenu(self,value):
-        
-        if value != self.currentFilterFunctionValue:
+    def setupMachineDropdown(self):
+        machinefileNamesList = jsonHelper.getAllMachineFileNames()
+        machineNameList = [objectHelper.getMachineNameFromMachineFilename(machineFilename) for machineFilename in machinefileNamesList]
+        dropMachineTitle = StringVar()
+        dropMachineTitle.set('Select Machine')
+        machineDropMenu = OptionMenu(self,dropMachineTitle,*machineNameList,command=self.machineSelectedFromOptionsMenu)
+        machineDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')
 
-            self.currentFilterFunctionValue = value
+    def setupHeadDropDown(self):
 
-            for i in range(2,self.grid_size()[1]): 
-                for element in self.grid_slaves(i,None):
-                    element.grid_forget()
+        headFilterTypeFilenameList = jsonHelper.getAllHeadFiltersFileNames()
+        headFilterNameList = [objectHelper.getHeadFilterNameFromHeadFilterFilename(filename) for filename in headFilterTypeFilenameList]
+        dropFtTitle = StringVar()
+        dropFtTitle.set('Select Head Filter Type')
+        ftDropMenu = OptionMenu(self,dropFtTitle,*headFilterNameList,command=self.headFilterTypeSelectedFromOptionsMenu)
+        ftDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')
 
+    def setupJawDropDown(self):
 
-        filterFunctionFilenameList = EguanaModel().getAllFilterFunctions()
-        filterFunctionsObjectList = EguanaModel().getFilterFunctionObjectsFromFunctionNameArray(filterFunctionFilenameList)
-
-        selectedFilterFunction = None
-
-        for ffObject in filterFunctionsObjectList:
-
-            if ffObject.name == value:
-                selectedFilterFunction = ffObject
-                break
-
-        if selectedFilterFunction:
-            deleteButton  = Button(self,text='Delete & Close',relief=RAISED,command=lambda:self.deleteFilterFunctionButtonPressed(selectedFilterFunction)).grid(row=2,column=1,columnspan=1,sticky=S+E)
-
-
-    def deleteFilterFunctionButtonPressed(self,selectedFilterFunctionObject):
-        removeFilterFunctionFromJSONForFilterFunction(selectedFilterFunctionObject)
-        self.parent.destroy()        
-
-
+        jawFilterTypeFilenameList = jsonHelper.getAllJawFiltersFileNames()
+        jawFilterNameList = [objectHelper.getJawFilterNameFromJawFilterFilename(filename) for filename in jawFilterTypeFilenameList]
+        dropFtTitle = StringVar()
+        dropFtTitle.set('Select Jaw Filter Type')
+        ftDropMenu = OptionMenu(self,dropFtTitle,*jawFilterNameList,command=self.jawFilterTypeSelectedFromOptionsMenu)
+        ftDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')
+    
+    def setupModuleDropdown(self):
+        modulefileNamesList = jsonHelper.getAllModulesFileNames()
+        moduleNamesList = [objectHelper.getModuleNameFromModuleFilename(moduleFilename) for moduleFilename in modulefileNamesList]
+        dropModuleTitle = StringVar()
+        dropModuleTitle.set('Select Module')
+        moduleDropMenu = OptionMenu(self,dropModuleTitle,*moduleNamesList,command=self.moduleSelectedFromOptionsMenu)
+        moduleDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')
 
     def machineSelectedFromOptionsMenu(self,value):
 
@@ -119,130 +96,37 @@ class DeleteSettingsFrame(Frame):
                 for element in self.grid_slaves(i,None):
                     element.grid_forget()
 
-            machineNamesList = EguanaModel().getAllMachines()
+            machineFilenamesList =  jsonHelper.getAllMachineFileNames()
 
-            selectedMachine = None
+            selectedMachineFilename = None
 
-            for machineFileName in machineNamesList:
-                if EguanaModel().getMachineObjectFromMachineName(machineFileName).name == value:
-                    selectedMachine = EguanaModel().getMachineObjectFromMachineName(machineFileName)
-                    break
+            for machineFileName in machineFilenamesList:
+                if objectHelper.getMachineNameFromMachineFilename(machineFileName) == value:
+                    selectedMachineFilename = machineFileName
 
+            if selectedMachineFilename:
+                self.setupSelectedMachineConfig(selectedMachineFilename)
 
-            if selectedMachine:
-                deleteButton  = Button(self,text='Delete & Close',relief=RAISED,command=lambda:self.deleteMachineButtonPressed(selectedMachine)).grid(row=2,column=1,columnspan=1,sticky=S+E)
+    def moduleSelectedFromOptionsMenu(self,value):
 
+        if value != self.currentModuleValue:
 
+            self.currentModuleValue = value
 
+            for i in range(2,self.grid_size()[1]): 
+                for element in self.grid_slaves(i,None):
+                    element.grid_forget()
 
+            moduleFileNamesList =  jsonHelper.getAllModulesFileNames()
 
+            selectedModuleFileName = None
 
-    # def setupSelectedMachineConfig(self,selectedMachine):
+            for moduleFileName in moduleFileNamesList:
+                if objectHelper.getModuleNameFromModuleFilename(moduleFileName) == value:
+                    selectedModuleFileName = moduleFileName
 
-    #     filterFunctionNotebook = Notebook(self)
-    #     filterFunctionNotebook.grid(row=3, column=0,columnspan=4, sticky=E+W)
-
-
-    #     allFilterFunctionsFilenameList = EguanaModel().getAllFilterFunctions()
-    #     headList = EguanaModel().getAllHeadFilterTypes()
-    #     headObjectList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(headList,'Head')
-
-    #     jawList = EguanaModel().getAllJawFilterTypes()
-    #     jawObjectList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(jawList,'Jaw')
-
-
-    #     filterTypeFrameList = []
-
-    #     enabledFilterFunctionNameList = getEnabledFilterFunctionsNameForMachineFilename(selectedMachine.getFilename())
-
-
-    #     for filterFunctionFilename in allFilterFunctionsFilenameList:
-
-    #         isEnabled = filterFunctionFilename in enabledFilterFunctionNameList
-    #         enabledJawFilenameList = []
-    #         enabledHeadFilenameList = []
-
-    #         if isEnabled:
-
-    #             enabledJawFilenameList = getEnabledJawFilterFunctionFileNamesForMachineAndFilterFunctionFileNames(selectedMachine.getFilename(),filterFunctionFilename)
-    #             enabledHeadFilenameList = getEnabledHeadFilterFunctionFileNamesForMachineAndFilterFunctionFileNames(selectedMachine.getFilename(),filterFunctionFilename)
-
-
-    #         filterTypeFrame = FilterTypeCheckboxFrameForEdit(filterFunctionNotebook,headObjectList,jawObjectList,isEnabled,enabledJawFilenameList,enabledHeadFilenameList)
-    #         filterTypeFrameList.append(filterTypeFrame)
-    #         filterTypeFrame.pack(fill=BOTH, expand=True)
-    #         filterFunctionNotebook.add(filterTypeFrame, text=EguanaModel().getFilterObjectFromFunctionName(filterFunctionFilename).name)
-
-    #     applyButton  = Button(self,text='Apply & Close',relief=RAISED,command=lambda:self.applyMachineButtonPressed(selectedMachine,filterTypeFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
-
-    def deleteMachineButtonPressed(self, selectedMachine):
-
-        removeMachineFromJSONForMachine(selectedMachine)
-        self.parent.destroy()
-
-
-    def headCheckButtonPressed(self,headCheckButtonInt,jawCheckButtonInt):
-        if headCheckButtonInt.get():
-            jawCheckButtonInt.set(0)
-        else:
-            jawCheckButtonInt.set(1)
-
-
-        for i in range(2,self.grid_size()[1]): 
-            for element in self.grid_slaves(i,None):
-                element.grid_forget()
-
-        self.currentHeadFilterTypeValue = None
-        self.currentJawFilterTypeValue = None
-
-        if headCheckButtonInt.get():
-            self.setupHeadDropDown()
-        else:
-            self.setupJawDropDown()
-
-
-    def jawCheckButtonPressed(self,headCheckButtonInt,jawCheckButtonInt):
-        if jawCheckButtonInt.get():
-            headCheckButtonInt.set(0)
-        else:
-            headCheckButtonInt.set(1)
-
-        for i in range(2,self.grid_size()[1]): 
-            for element in self.grid_slaves(i,None):
-                element.grid_forget()
-
-        self.currentHeadFilterTypeValue = None
-        self.currentJawFilterTypeValue = None
-
-        if headCheckButtonInt.get():
-            self.setupHeadDropDown()
-        else:
-            self.setupJawDropDown()
-
-
-    def setupHeadDropDown(self):
-        headFilterTypeFilenameList = EguanaModel().getAllHeadFilterTypes()
-        headFilterTypeObjectList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(headFilterTypeFilenameList,'Head')
-
-        headFilterTypeNamelist = [ftObject.name for ftObject in headFilterTypeObjectList]
-
-        dropFtTitle = StringVar()
-        dropFtTitle.set('Select Head Filter Type')
-        ftDropMenu = OptionMenu(self,dropFtTitle,*headFilterTypeNamelist,command=self.headFilterTypeSelectedFromOptionsMenu)
-        ftDropMenu.grid(row=2, column=0, columnspan=4, sticky='ew')
-
-    def setupJawDropDown(self):
-
-        jawFilterTypeFilenameList = EguanaModel().getAllJawFilterTypes()
-        jawFilterTypeObjectList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(jawFilterTypeFilenameList,'Jaw')
-
-        jawFilterTypeNamelist = [ftObject.name for ftObject in jawFilterTypeObjectList]
-
-        dropFtTitle = StringVar()
-        dropFtTitle.set('Select Jaw Filter Type')
-        ftDropMenu = OptionMenu(self,dropFtTitle,*jawFilterTypeNamelist,command=self.jawFilterTypeSelectedFromOptionsMenu)
-        ftDropMenu.grid(row=2, column=0, columnspan=4, sticky='ew')
-
+            if selectedModuleFileName:
+                self.setupSelectedModuleConfig(selectedModuleFileName)
 
 
     def jawFilterTypeSelectedFromOptionsMenu(self,value):
@@ -250,24 +134,22 @@ class DeleteSettingsFrame(Frame):
         if value != self.currentJawFilterTypeValue:
             self.currentFilterFunctionValue = value
 
-            for i in range(3,self.grid_size()[1]): 
+            for i in range(2,self.grid_size()[1]): 
                 for element in self.grid_slaves(i,None):
                     element.grid_forget()
 
 
-            filterTypeFilenameList = EguanaModel().getAllJawFilterTypes()
-            filterTypeObjectList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(filterTypeFilenameList,'Jaw')
+            jawFileNameList = jsonHelper.getAllJawFiltersFileNames()
 
-            selectedFilterType = None
+            selectedJawFileName = None
 
-            for ftObject in filterTypeObjectList:
-
-                if ftObject.name == value:
-                    selectedFilterType = ftObject
+            for jawFileName in jawFileNameList:
+                if objectHelper.getJawFilterNameFromJawFilterFilename(jawFileName) == value:
+                    selectedJawFileName = jawFileName
                     break
 
-            if selectedFilterType:
-                self.filterTypeSelectedFromOptionsMenu(selectedFilterType,'Jaw')
+            if selectedJawFileName:
+                self.setupSelectedFilterType(selectedJawFileName,'Jaw')
 
 
     def headFilterTypeSelectedFromOptionsMenu(self,value):
@@ -275,35 +157,64 @@ class DeleteSettingsFrame(Frame):
         if value != self.currentHeadFilterTypeValue:
             self.currentHeadFilterTypeValue = value
 
-            for i in range(3,self.grid_size()[1]): 
+            for i in range(2,self.grid_size()[1]): 
                 for element in self.grid_slaves(i,None):
                     element.grid_forget()
 
 
-            filterTypeFilenameList = EguanaModel().getAllHeadFilterTypes()
-            filterTypeObjectList = EguanaModel().getFilterTypeObjectsFromTypeNameArray(filterTypeFilenameList,'Head')
+            headFileNameList = jsonHelper.getAllHeadFiltersFileNames()
 
-            selectedFilterType = None
+            selectedHeadFileName = None
 
-            for ftObject in filterTypeObjectList:
-
-                if ftObject.name == value:
-                    selectedFilterType = ftObject
+            for headFileName in headFileNameList:
+                if objectHelper.getHeadFilterNameFromHeadFilterFilename(headFileName) == value:
+                    selectedHeadFileName = headFileName
                     break
 
-            if selectedFilterType:
-                self.filterTypeSelectedFromOptionsMenu(selectedFilterType,'Head')
+            if selectedHeadFileName:
+                self.setupSelectedFilterType(selectedHeadFileName,'Head')
 
 
-    def filterTypeSelectedFromOptionsMenu(self,selectedFilterTypeObject,filterType):
-        deleteButton  = Button(self,text='Delete & Close',relief=RAISED,command=lambda:self.deleteFilterTypeButtonPressed(selectedFilterTypeObject,filterType)).grid(row=3,column=1,columnspan=1,sticky=S+E)
+
+    def setupSelectedMachineConfig(self,selectedMachineFilename):
+
+        Button(self,text='Delete & Close',relief=RAISED,command=lambda:self.deleteMachineButtonPressed(selectedMachineFilename)).grid(row=3,column=1,columnspan=1,sticky=S+E)
+
+    def setupSelectedFilterType(self,selectedFilterFileName,filterType):
+
+        Button(self,text='Delete & Close',relief=RAISED,command=lambda:self.deleteFilterTypeButtonPressed(selectedFilterFileName,filterType)).grid(row=4,column=1,columnspan=1,sticky=S+E)
+
+    def setupSelectedModuleConfig(self,selectedModuleFileName):
+
+        Button(self,text='Delete & Close',relief=RAISED,command=lambda:self.deleteModuleButtonPressed(selectedModuleFileName)).grid(row=4,column=1,columnspan=1,sticky=S+E)
 
 
-    def deleteFilterTypeButtonPressed(self,selectedFilterTypeObject,filterType):
-
-        removeFilterTypeFromJSONForFilterType(selectedFilterTypeObject,filterType)
+    def deleteMachineButtonPressed(self, selectedMachineFileName):
         
-        self.parent.destroy()          
+        jsonHelper.removeMachineFromJSONForMachine(selectedMachineFileName)
+        os.remove('./machineConfig/'+selectedMachineFileName)    
+        self.parent.destroy()
+
+    def deleteFilterTypeButtonPressed(self,selectedFilterFileName,filterType):
+
+        jsonHelper.removeFilterTypeFromJSONForFilterType(selectedFilterFileName,filterType)
+
+        if filterType ==  'Head':
+            os.remove('./filterTypesConfig/headFilters/'+selectedFilterFileName)    
+        else:
+            os.remove('./filterTypesConfig/jawFilters/'+selectedFilterFileName)  
+
+        self.parent.destroy()     
+
+
+    def deleteModuleButtonPressed(self,selectedModuleFileName):
+
+        jsonHelper.removeModuleFromJSON(selectedModuleFileName)
+        os.remove('./moduleConfig/'+selectedModuleFileName)    
+
+        self.parent.destroy()
+
+
 
 
 

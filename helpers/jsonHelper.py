@@ -172,26 +172,6 @@ def removeMachineFromJSONForMachine(machineFileName):
     with open("./config.json", 'w') as f:
         json.dump(configJSONDict,f)
 
-def removeFilterFunctionFromJSONForFilterFunction(filterFunctionObject):
-        
-    with open("./config.json", 'r') as f:
-        configJSONDict = json.loads(f.read())
-
-    configArray = configJSONDict["configurations"]
-
-    for machineDict in configArray:
-    	filterFunctionsArray = machineDict['filterFunctions']
-    	for filterFunctionDict in filterFunctionsArray:
-    		if filterFunctionDict['filterApplicationName'] == filterFunctionObject.getFilename():
-    			filterFunctionsArray.remove(filterFunctionDict)
-    			break
-
-
-    configJSONDict["allFilterFunctions"].remove(filterFunctionObject.getFilename())
-
-    with open("./config.json", 'w') as f:
-        json.dump(configJSONDict,f)
-
 
 def removeFilterTypeFromJSONForFilterType(selectedFilterFileName,filterType):
         

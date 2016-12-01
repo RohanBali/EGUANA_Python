@@ -1,12 +1,8 @@
 from tkinter import *
 from eguanaModel import EguanaModel
-from helpers.jsonHelper import *
 from egpopupSettings.groupDescriptionCheckboxFrame import GroupDescriptionCheckboxFrame
 
 from helpers import jsonHelper
-
-from helpers.jsonHelper import removeFilterFunctionFromJSONForFilterFunction as removeFilterFunctionFromJSONForFilterFunction
-from helpers.jsonHelper import addFilterFunctionToJSON as addFilterFunctionToJSON
 
 from helpers.jsonHelper import removeFilterTypeFromJSONForFilterType as removeFilterTypeFromJSONForFilterType
 from helpers.jsonHelper import addFilterTypeToJSON as addFilterTypeToJSON
@@ -14,8 +10,6 @@ from helpers import jsonHelper
 from helpers import objectHelper
 
 from tkinter.ttk import Notebook
-from egpopupSettings.filterTypeCheckboxFrameForEdit import FilterTypeCheckboxFrameForEdit
-from egpopupSettings.filterFunctionCheckboxFrameForEdit import FilterFunctionCheckboxFrameForEdit
 
 
 class EditSettingsFrame(Frame):
@@ -202,7 +196,7 @@ class EditSettingsFrame(Frame):
                     break
 
             if selectedJawFileName:
-                self.filterTypeSelectedFromOptionsMenu(selectedJawFileName,'Jaw')
+                self.setupSelectedFilterType(selectedJawFileName,'Jaw')
 
 
     def headFilterTypeSelectedFromOptionsMenu(self,value):
@@ -225,7 +219,7 @@ class EditSettingsFrame(Frame):
                     break
 
             if selectedHeadFileName:
-                self.filterTypeSelectedFromOptionsMenu(selectedHeadFileName,'Head')
+                self.setupSelectedFilterType(selectedHeadFileName,'Head')
 
 
     def setupSelectedModuleConfig(self,selectedModuleFileName):
@@ -251,7 +245,7 @@ class EditSettingsFrame(Frame):
         Button(self,text='Apply & Close',relief=RAISED,command=lambda:self.applyModuleButtonPressed(selectedModuleFileName,groupDescriptionFrameList)).grid(row=4,column=1,columnspan=1,sticky=S+E)
 
 
-    def filterTypeSelectedFromOptionsMenu(self,selectedFilterFileName,filterType):
+    def setupSelectedFilterType(self,selectedFilterFileName,filterType):
 
         groupDesctiptionNotebook = Notebook(self)
         groupDesctiptionNotebook.grid(row=3, column=0, columnspan=4, sticky=E+W) 
