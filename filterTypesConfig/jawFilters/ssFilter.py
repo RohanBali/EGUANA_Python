@@ -5,4 +5,3 @@ class SsFilter(EguanaFilterTypesConfig):
 		EguanaFilterTypesConfig.__init__(self)   
 		self.name = "Simple Substraction"
 		self.filterType = "Jaw"
-
