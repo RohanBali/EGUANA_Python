@@ -1,9 +1,25 @@
 # import base class
 from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 from filterTypesConfig.eguanaFilterTypesConfig import EguanaFilterTypesConfig
+from moduleConfig.eguanaModuleConfig import EguanaModuleConfig
 
 import importlib.util
 import os.path
+#import traceback
+
+def __getErrorMessageForException(exception):
+	errorMessage=exception.__class__.__name__ + ': '+exception.msg
+
+	if isinstance(exception,SyntaxError):
+		errorMessage+='\n'+exception.filename+', Line '+str(exception.lineno)
+	#else:
+		#errorMessage+='\nTraceback:\n'
+		#tb=traceback.extract_tb(exception.__traceback__,3)
+		#tblist=traceback.format_list(tb)
+		#for tbRecord in tblist:
+		#	errorMessage+=tbRecord
+	
+	return errorMessage
 
 def __extractModuleFromFile(filePath):
 	'''return value: (isCheckSuccess,classVal,errorMessage)'''
@@ -19,7 +35,9 @@ def __extractModuleFromFile(filePath):
 		testModule = importlib.util.module_from_spec(spec)
 		spec.loader.exec_module(testModule)
 	except Exception as e:
-		return (False,None,'exception raised when loading config file ('+str(e)+')')
+		errorMessage='exception raised when loading file:\n'+__getErrorMessageForException(e)
+		return (False,None,errorMessage)
+
 	if hasattr(testModule,className):
 		classType=getattr(testModule,className)
 		return (True,classType,'')
@@ -29,7 +47,7 @@ def __extractModuleFromFile(filePath):
 def __testClassType(testClassType,baseClassType,testVector):
 	'''testVector:[(functionName1,argumentList1,returnType1),(...)]'''
 	if not issubclass(testClassType,baseClassType):
-		errorMessage='Error: ' + testClassType.__name__ + ' is not derived from ' + baseClassType.__name__ + '.'
+		errorMessage=testClassType.__name__ + ' is not derived from ' + baseClassType.__name__ + '.'
 		return [False,errorMessage]
 	
 	#not sure if there is a way to check if the function is overwritten or not without instantiating the base class
@@ -37,12 +55,12 @@ def __testClassType(testClassType,baseClassType,testVector):
 	try:
 		baseClassInstance=baseClassType()
 	except Exception as e:
-		return [False,'Error: base class instantiation raises exception ('+str(e)+')']
+		return [False,'Base class instantiation raises exception:\n'+__getErrorMessageForException(e)]
 	
 	try:
 		testClassInstance=testClassType()
 	except Exception as e:
-		return [False,'Error: test class instantiation raises exception ('+str(e)+')']
+		return [False, testClassType.__name__ + ' instantiation raises exception:\n'+__getErrorMessageForException(e)]
 	
 	errorMessageList=[]
 	for testVectorIndex in range(0,len(testVector)):
@@ -53,23 +71,21 @@ def __testClassType(testClassType,baseClassType,testVector):
 		baseFunction = getattr(baseClassInstance,currentFunctionName)
 		currFunction = getattr(testClassInstance,currentFunctionName)
 		
-		errorMessageBeginning='In test ' + str(testVectorIndex+1)+ ': ' + currentFunctionName
-		
 		if baseFunction.__func__ is currFunction.__func__:
-			errorMessageList.append(errorMessageBeginning + ' is not overwritten')
+			errorMessageList.append(currentFunctionName + ' is not overwritten')
 		else:
 			try:
 				currentTestReturnValue=getattr(testClassInstance,currentFunctionName)(*currentFunctionArgument)
 				if type(currentTestReturnValue) is not currentFunctionExpectedReturnType:
-					errorMessageList.append(errorMessageBeginning + ' do not return expected type')
+					errorMessageList.append(currentFunctionName + ' do not return expected type')
 			
 			except Exception as e:
-				errorMessageList.append(errorMessageBeginning + ' raises exception in testing (' + str(e) + ')')
+				errorMessageList.append(currentFunctionName + ' raises exception in testing:\n' + __getErrorMessageForException(e))
 	
 	if errorMessageList:
-		errorMessage = str(len(errorMessageList)) + ' error(s) in total:'
+		errorMessage = 'Problem in ' + testClassType.__name__ + ':'
 		for currentMessage in errorMessageList:
-			errorMessage += ' ' + currentMessage
+			errorMessage += '\n' + currentMessage
 
 		return [False,errorMessage]
 	else:
@@ -92,6 +108,8 @@ __HeadFilter_TestVector=[]
 
 __JawFilter_TestVector=[]
 
+__ModuleConfig_TestVector=[]
+
 def testMachineConfig(testClassFilePath):
 	return __testFile(testClassFilePath,EguanaMachineConfig,__MachineConfig_TestVector)
 
@@ -100,3 +118,6 @@ def testHeadFilter(testClassFilePath):
 
 def testJawFilter(testClassFilePath):
 	return __testFile(testClassFilePath,EguanaFilterTypesConfig,__JawFilter_TestVector)
+
+def testModuleConfig(testClassFilePath):
+	return __testFile(testClassFilePath,EguanaModuleConfig,__ModuleConfig_TestVector)
