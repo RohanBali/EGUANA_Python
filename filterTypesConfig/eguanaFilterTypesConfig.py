@@ -1,4 +1,6 @@
 import sys
+import numpy
+from numpy import matrix
 
 class EguanaFilterTypesConfig():
 	def __init__(self):
@@ -12,6 +14,7 @@ class EguanaFilterTypesConfig():
 		return components[-1]
 
 	def filter(articulatorSignalList,referenceSignalList):
+
 	    """
 	    	articlulatorSignalList --- Rows represent values across time
 	    						   --- Columns represent values across dimensions
