@@ -1,6 +1,4 @@
 import sys
-import numpy
-from numpy import matrix
 
 class EguanaFilterTypesConfig():
 	def __init__(self):
