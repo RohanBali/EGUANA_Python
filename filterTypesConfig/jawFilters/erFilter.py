@@ -37,7 +37,7 @@ class ErFilter(EguanaFilterTypesConfig):
 			
 			""" transformation of articulatorSignalList to correctedList
 			"""
-			ss_ref_arti = referenceSignalList - articulatorSignalList;
+			ss_ref_arti = articulatorSignalList - referenceSignalList;
 			
 			for i in range(len(alpha)): 
 				correctedList[0][i] = cos(alpha[i]) * ss_ref_arti[0][i] + sin(alpha[i]) * ss_ref_arti[2][i];

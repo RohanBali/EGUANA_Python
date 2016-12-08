@@ -13,7 +13,7 @@ class SsFilter(EguanaFilterTypesConfig):
 	def filter(articulatorSignalList,referenceSignalList):	
 	
 		if (articulatorSignalList.shape[0] == referenceSignalList.shape[0] and articulatorSignalList.shape[1] == referenceSignalList.shape[1]):
-			return referenceSignalList - articulatorSignalList;
+			return  articulatorSignalList - referenceSignalList;
 		else:
 			return none;
 		
