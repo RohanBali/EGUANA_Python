@@ -75,6 +75,22 @@ def getModuleListForGroup(groupName):
 
     return []
 
+
+def getMachineListForGroup(groupName):
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    machineConfigDictList = configJSONDict["machineConfig"]
+    machinesInGroupFilenameList = []
+
+    for machineDict in machineConfigDictList:
+        groupList = machineDict["groups"]
+        if groupName in groupList:
+            machinesInGroupFilenameList.append(machineDict["machineName"])
+
+    return machinesInGroupFilenameList
+
 def getAllGroupsForMachineFilename(machineFilename):
     
     with open("./config.json", 'r') as f:
@@ -317,4 +333,73 @@ def addMachineToJSON(machineFileName,groupNamesList):
 
     with open("./config.json", 'w') as f:
         json.dump(configJSONDict,f)
+
+
+def addGroupToMachine(groupName,machineFilename):
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+    
+    machineDictList = configJSONDict["machineConfig"]
+
+    for machineDict in machineDictList:
+        if machineFilename == machineDict["machineName"]:
+            machineDict["groups"].append(groupName)
+
+
+    with open("./config.json", 'w') as f:
+        json.dump(configJSONDict,f)
+        
+def addGroupToJSON(groupName,headFilterFilenameList,jawFilterFilenameList,moduleFilenameList):
+
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    newGroupDict = {}
+    newGroupDict["groupName"] = groupName
+    newGroupDict["headFilters"] = headFilterFilenameList
+    newGroupDict["jawFilters"] = jawFilterFilenameList
+    newGroupDict["modules"] = moduleFilenameList
+
+    groupConfigList = configJSONDict["groupConfig"]
+    groupConfigList.append(newGroupDict)
+
+
+    allGroupList = configJSONDict["allGroups"]
+    allGroupList.append(groupName)
+    
+    with open("./config.json", 'w') as f:
+        json.dump(configJSONDict,f)    
+
+def removeGroupFromJSON(groupName):
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigList = configJSONDict["groupConfig"]
+
+
+    for groupDict in groupConfigList:
+        if groupDict["groupName"] == groupName:
+            groupConfigList.remove(groupDict)
+            break;
+
+    allGroupList = configJSONDict["allGroups"]
+    allGroupList.remove(groupName)
+
+
+    machineDictList = configJSONDict["machineConfig"]
+
+    for machineDict in machineDictList:
+        if groupName in machineDict["groups"]:
+            machineDict["groups"].remove(groupName)
+
+
+    
+    with open("./config.json", 'w') as f:
+        json.dump(configJSONDict,f)    
+
+
+
 

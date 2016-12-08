@@ -10,6 +10,7 @@ from helpers import jsonHelper
 from helpers import objectHelper
 
 from tkinter.ttk import Notebook
+from egpopupSettings.groupEditCheckboxFrame import GroupEditCheckboxFrame
 
 
 class EditSettingsFrame(Frame):
@@ -20,11 +21,11 @@ class EditSettingsFrame(Frame):
         self.currentJawFilterTypeValue = None
         self.currentHeadFilterTypeValue = None
         self.currentModuleValue = None
-
+        self.currentGroupValue = None
         self.parent = parent
 
     def setupFrame(self):
-        dropList = ['Machine', 'Head Filter','Jaw Filter','Module']
+        dropList = ['Machine', 'Head Filter','Jaw Filter','Module','Group']
         dropTitle = StringVar()
         dropTitle.set('Select Type')
         drop = OptionMenu(self,dropTitle,*dropList, command=self.selectTypeCallback)
@@ -55,9 +56,10 @@ class EditSettingsFrame(Frame):
                 self.setupHeadDropDown()
             elif value == 'Jaw Filter':
                 self.setupJawDropDown()
-            else: #'Module'
+            elif value== "Module":
                 self.setupModuleDropdown()
-
+            else: #group
+                self.setupEditGroupDropdown();
 
     def machineSelectedFromOptionsMenu(self,value):
 
@@ -153,6 +155,39 @@ class EditSettingsFrame(Frame):
         dropFtTitle.set('Select Jaw Filter Type')
         ftDropMenu = OptionMenu(self,dropFtTitle,*jawFilterNameList,command=self.jawFilterTypeSelectedFromOptionsMenu)
         ftDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')
+ 
+
+    def setupEditGroupDropdown(self):
+
+        groupNameList = jsonHelper.getAllGroups()
+        dropGroupTitle = StringVar()
+        dropGroupTitle.set('Select Group')
+        groupDropMenu = OptionMenu(self,dropGroupTitle,*groupNameList,command=self.groupSelectedFromOptionsMenu)
+        groupDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')
+
+
+    def groupSelectedFromOptionsMenu(self,value):
+        
+        if value != self.currentGroupValue:
+            self.currentGroupValue = value
+
+            for i in range(2,self.grid_size()[1]): 
+                for element in self.grid_slaves(i,None):
+                    element.grid_forget()
+
+
+        self.setupSelectedGroup(value)
+
+    def setupSelectedGroup(self,groupName):
+        
+        groupCheckboxFrame = GroupEditCheckboxFrame(self,jsonHelper.getAllHeadFiltersFileNames(),jsonHelper.getAllJawFiltersFileNames(),jsonHelper.getAllModulesFileNames())
+        groupCheckboxFrame.setEnabledHeadFilenames(jsonHelper.getHeadFiltersListForGroup(groupName))
+        groupCheckboxFrame.setEnabledJawFilenames(jsonHelper.getJawFiltersListForGroup(groupName))
+        groupCheckboxFrame.setEnabledModuleFilenames(jsonHelper.getModuleListForGroup(groupName))
+
+        groupCheckboxFrame.grid(row=2, column=0, columnspan=4, sticky=E+W+N+S)
+        Button(self,text='Apply & Close',relief=RAISED,command=lambda:self.applyGroupButtonPressed(groupName,groupCheckboxFrame)).grid(row=3,column=1,columnspan=1,sticky=S+E)
+
 
     def moduleSelectedFromOptionsMenu(self,value):
 
@@ -302,6 +337,29 @@ class EditSettingsFrame(Frame):
         
         self.parent.destroy()     
 
+   
+    def applyGroupButtonPressed(self,groupName, groupCheckboxFrame):
+
+
+        headFilterFilenameList = groupCheckboxFrame.getEnabledHeadFilenames() 
+        jawFilterFilenameList = groupCheckboxFrame.getEnabledJawFilenames() 
+        moduleFilenameList = groupCheckboxFrame.getEnabledModuleFilenames() 
+
+        machineFilenameList = jsonHelper.getMachineListForGroup(groupName)
+
+        # remove group which also removes group from machines
+        # add group
+        # iteratively look over machines and add the group back
+
+
+        jsonHelper.removeGroupFromJSON(groupName)
+        jsonHelper.addGroupToJSON(groupName,headFilterFilenameList,jawFilterFilenameList,moduleFilenameList)
+        
+        for machineFilename in machineFilenameList:
+            jsonHelper.addGroupToMachine(groupName,machineFilename)
+
+
+        self.parent.destroy()
 
 
 

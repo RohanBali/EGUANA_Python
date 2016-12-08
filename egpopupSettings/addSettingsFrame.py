@@ -7,15 +7,12 @@ import json
 
 from eguanaModel import EguanaModel
 
-from tests.machineConfigTest import MachineConfigTest
-from tests.filterTypesConfigTest import FilterTypesConfigTest
-
 from egpopupSettings.groupDescriptionCheckboxFrame import GroupDescriptionCheckboxFrame
 from egpopupSettings.groupEditCheckboxFrame import GroupEditCheckboxFrame
 from helpers import jsonHelper
 
 GROUP_DEFAULT_STRING = "Enter your group name"
-
+DUPLICATE_NAME_ERROR = "The group name you entered already exists. Please try again."
 
 class AddSettingsFrame(Frame):
 
@@ -50,7 +47,7 @@ class AddSettingsFrame(Frame):
         if value != self.currentValue:
             self.currentValue = value
 
-            for i in range(2, self.grid_size()[1]):
+            for i in range(1, self.grid_size()[1]):
                 for element in self.grid_slaves(i, None):
                     element.grid_forget()
 
@@ -191,7 +188,6 @@ class AddSettingsFrame(Frame):
                 
                 else:
                     messagebox.showinfo("Error", errorString)
-
             else:
                 messagebox.showinfo("Error", "File already exists in moduleConfig directory: " + fileName)
 
@@ -199,10 +195,13 @@ class AddSettingsFrame(Frame):
         
         groupNameEntry = Entry(self,justify=CENTER);
         groupNameEntry.insert(0, GROUP_DEFAULT_STRING)
+        groupNameEntry.bind('<FocusIn>', lambda event:self.on_entry_click(event,groupNameEntry))
+        groupNameEntry.bind('<FocusOut>', lambda event:self.on_focusout(event,groupNameEntry))
+        groupNameEntry.config(fg = 'grey')
         groupNameEntry.grid(row=1,column=1,columnspan=2,sticky=E+W)
         groupCheckboxFrame = GroupEditCheckboxFrame(self,jsonHelper.getAllHeadFiltersFileNames(),jsonHelper.getAllJawFiltersFileNames(),jsonHelper.getAllModulesFileNames())
         groupCheckboxFrame.grid(row=2, column=0, columnspan=4, sticky=E+W+N+S)
-        Button(self,text='Apply & Close',relief=RAISED).grid(row=3,column=1,columnspan=1,sticky=S+E)
+        Button(self,text='Apply & Close',relief=RAISED,command=lambda:self.applyGroupButtonPressed(groupNameEntry.get(),groupCheckboxFrame)).grid(row=3,column=1,columnspan=1,sticky=S+E)
 
     def applyMachineButtonPressed(self, filePath, groupDescriptionFrameList):
         
@@ -253,3 +252,31 @@ class AddSettingsFrame(Frame):
 
         subprocess.call('cp \"'+filePath+'\" ./moduleConfig/', shell=True)
         self.parent.destroy()
+
+    def applyGroupButtonPressed(self,groupName, groupCheckboxFrame):
+
+        groupNameList = jsonHelper.getAllGroups()
+
+        if groupName in groupNameList:
+            messagebox.showinfo("Error", DUPLICATE_NAME_ERROR)
+        else:
+            headFilterFilenameList = groupCheckboxFrame.getEnabledHeadFilenames() 
+            jawFilterFilenameList = groupCheckboxFrame.getEnabledJawFilenames() 
+            moduleFilenameList = groupCheckboxFrame.getEnabledModuleFilenames() 
+            jsonHelper.addGroupToJSON(groupName,headFilterFilenameList,jawFilterFilenameList,moduleFilenameList)
+            self.parent.destroy()
+
+
+
+    def on_entry_click(self,event,groupNameEntry):
+        """function that gets called whenever entry is clicked"""
+        if groupNameEntry.get() == GROUP_DEFAULT_STRING:
+           groupNameEntry.delete(0, "end") # delete all the text in the entry
+           groupNameEntry.insert(0, '') #Insert blank for user input
+           groupNameEntry.config(fg = 'black')
+
+    def on_focusout(self,event,groupNameEntry):
+        if groupNameEntry.get() == '':
+            groupNameEntry.insert(0, GROUP_DEFAULT_STRING)
+            groupNameEntry.config(fg = 'grey')
+

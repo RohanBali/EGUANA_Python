@@ -8,9 +8,6 @@ import json
 
 from eguanaModel import EguanaModel
 
-from tests.machineConfigTest import MachineConfigTest
-from tests.filterTypesConfigTest import FilterTypesConfigTest
-
 from egpopupSettings.addSettingsFrame import AddSettingsFrame
 from egpopupSettings.editSettingsFrame import EditSettingsFrame
 from egpopupSettings.deleteSettingsFrame import DeleteSettingsFrame
