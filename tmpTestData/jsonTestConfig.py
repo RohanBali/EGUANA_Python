@@ -18,11 +18,11 @@ import numpy
 
 class JsonTestConfig(EguanaMachineConfig):
     
+    name = "JSON test config"
+    
     def __init__(self):
         EguanaMachineConfig.__init__(self)   
-        self.buttonName = "Select Directory for 2D EMA"
         self.posPath = ""
-        self.name = "JSON test config"
 
     def setupPlotAndFilterStates(self):
         self.plot3DKButtonState = 'disabled'

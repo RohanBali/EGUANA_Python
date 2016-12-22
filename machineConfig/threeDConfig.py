@@ -15,12 +15,12 @@ from tkinter import  DISABLED, NORMAL
 import os, os.path
 
 class ThreeDConfig(EguanaMachineConfig):
+    name = "3D EMA"
     
     def __init__(self):
         EguanaMachineConfig.__init__(self)
         self.buttonName = "Select Directory for 3D EMA"
         self.getAllowedFilters = ['speech3DFilterConfig.py','swallow3DFilterConfig.py']   
-        self.name = "3D EMA"
         
     def whatsMyName(self):
         print("ThreeDConfig")

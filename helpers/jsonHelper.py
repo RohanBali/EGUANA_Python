@@ -2,34 +2,107 @@ import json
 from eguanaModel import EguanaModel
 
 
-def getEnabledFilterFunctionsNameForMachineFilename(machineFilename):
 
-	with open("./config.json", 'r') as f:
-		configJSONDict = json.loads(f.read())
+def getAllMachineFileNames():
+    #gets all machine filenames
+    with open('config.json') as data_file:    
+        data = json.load(data_file)
 
-	configArray = configJSONDict["configurations"]
+    machineFilenameList = data['allMachines']
+    
+    return machineFilenameList
 
-	tmpDict = None
+def getAllGroups():
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
 
-	for configDict in configArray:
-		if configDict['machineName'] == machineFilename:
-			tmpDict = configDict
-			break
+    return configJSONDict["allGroups"]    
 
-	if tmpDict:
 
-		filterFunctionsList = tmpDict['filterFunctions']
+def getAllModulesFileNames():
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
 
-		enabledFilterFunctionNameList = []
+    return configJSONDict["allModules"]   
 
-		for filterFunctionDict in filterFunctionsList:
-			enabledFilterFunctionNameList.append(filterFunctionDict['filterApplicationName'])
+def getAllHeadFiltersFileNames():
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
 
-		return enabledFilterFunctionNameList
+    return configJSONDict["allHeadFilterTypes"]  
 
-   
-	return []
+def getAllJawFiltersFileNames():
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
 
+    return configJSONDict["allJawFilterTypes"]  
+
+def getHeadFiltersListForGroup(groupName):
+    
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigArray = configJSONDict['groupConfig']
+
+    for groupDict in groupConfigArray:
+        if groupDict['groupName'] == groupName:
+            return groupDict["headFilters"]
+
+    return []
+
+
+def getJawFiltersListForGroup(groupName):
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigArray = configJSONDict['groupConfig']
+
+    for groupDict in groupConfigArray:
+        if groupDict['groupName'] == groupName:
+            return groupDict["jawFilters"]
+
+    return []
+    
+def getModuleListForGroup(groupName):
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigArray = configJSONDict['groupConfig']
+    
+    for groupDict in groupConfigArray:
+        if groupDict['groupName'] == groupName:
+            return groupDict["modules"]
+
+    return []
+
+
+def getMachineListForGroup(groupName):
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    machineConfigDictList = configJSONDict["machineConfig"]
+    machinesInGroupFilenameList = []
+
+    for machineDict in machineConfigDictList:
+        groupList = machineDict["groups"]
+        if groupName in groupList:
+            machinesInGroupFilenameList.append(machineDict["machineName"])
+
+    return machinesInGroupFilenameList
+
+def getAllGroupsForMachineFilename(machineFilename):
+    
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    machineConfigArray = configJSONDict['machineConfig']
+    
+    for machineDict in machineConfigArray:
+        if machineDict['machineName'] == machineFilename:
+            return machineDict["groups"]
+
+    return []
 
 def getEnabledJawFilterFunctionFileNamesForMachineAndFilterFunctionFileNames(machineFilename,filterFunctionFilename):
 
@@ -92,202 +165,121 @@ def getEnabledHeadFilterFunctionFileNamesForMachineAndFilterFunctionFileNames(ma
 	return []
 
 
-def getEnabledMachineNameForFilterFunctionFilename(filterFunctionFilename):
-
-	with open("./config.json", 'r') as f:
-		configJSONDict = json.loads(f.read())
-
-	configArray = configJSONDict["configurations"]
-
-	enabledMachineFilenameList = []
-
-	for machineConfigDict in configArray:
-
-		for filterFunctionsDict in machineConfigDict['filterFunctions']:
-			if filterFunctionsDict['filterApplicationName'] == filterFunctionFilename:
-				enabledMachineFilenameList.append(machineConfigDict['machineName'])
-				break
-
-	return enabledMachineFilenameList
-	
-
-def getEnabledMachineNameForFilterTypeFilename(filterTypeFilename,filterType):
-
-	with open("./config.json", 'r') as f:
-		configJSONDict = json.loads(f.read())
-
-	configArray = configJSONDict["configurations"]
-
-	if filterType == 'Head':
-		filterTypeName = filterType.lower() + 'Filters'
-	elif filterType == 'Jaw':
-		filterTypeName = filterType.lower() + 'Filter'
-
-	enabledMachineFilenameList = []
-
-	for machineConfigDict in configArray:
-
-		for filterFunctionsDict in machineConfigDict['filterFunctions']:
-			filterTypeNameArray = filterFunctionsDict['filterTypes'][filterTypeName]
-			if filterTypeFilename in filterTypeNameArray:
-				enabledMachineFilenameList.append(machineConfigDict['machineName'])
-				break			
-
-	return enabledMachineFilenameList
 
 
 
-def getEnabledFilterFunctionFileNamesForMachineAndFilterTypeFileNames(machineFilename,filterTypeFilename,filterType):
-
-	with open("./config.json", 'r') as f:
-		configJSONDict = json.loads(f.read())
-
-	configArray = configJSONDict["configurations"]
-
-	if filterType == 'Head':
-		filterTypeName = filterType.lower() + 'Filters'
-	elif filterType == 'Jaw':
-		filterTypeName = filterType.lower() + 'Filter'
-
-	enabledFilterFunctionNameList = []
-
-	for machineConfigDict in configArray:
-
-		if machineConfigDict['machineName'] == machineFilename:
-
-			for filterFunctionsDict in machineConfigDict['filterFunctions']:
-				filterTypeNameArray = filterFunctionsDict['filterTypes'][filterTypeName]
-				if filterTypeFilename in filterTypeNameArray:
-					enabledFilterFunctionNameList.append(filterFunctionsDict['filterApplicationName'])
-
-	return enabledFilterFunctionNameList
-
-
-def removeMachineFromJSONForMachine(machine):
+def removeMachineFromJSONForMachine(machineFileName):
         
     with open("./config.json", 'r') as f:
         configJSONDict = json.loads(f.read())
 
-    configArray = configJSONDict["configurations"]
 
-    for machineDict in configArray:
-        if machineDict["machineName"] == machine.getFilename():
-            configArray.remove(machineDict)
+    machineConfigArray = configJSONDict["machineConfig"]
+
+
+    for machineDict in machineConfigArray:
+        if machineDict["machineName"] == machineFileName:
+            machineConfigArray.remove(machineDict)
             break
 
 
-    configJSONDict["allMachines"].remove(machine.getFilename())
-
-    with open("./config.json", 'w') as f:
-        json.dump(configJSONDict,f)
-
-def removeFilterFunctionFromJSONForFilterFunction(filterFunctionObject):
-        
-    with open("./config.json", 'r') as f:
-        configJSONDict = json.loads(f.read())
-
-    configArray = configJSONDict["configurations"]
-
-    for machineDict in configArray:
-    	filterFunctionsArray = machineDict['filterFunctions']
-    	for filterFunctionDict in filterFunctionsArray:
-    		if filterFunctionDict['filterApplicationName'] == filterFunctionObject.getFilename():
-    			filterFunctionsArray.remove(filterFunctionDict)
-    			break
-
-
-    configJSONDict["allFilterFunctions"].remove(filterFunctionObject.getFilename())
+    configJSONDict["allMachines"].remove(machineFileName)
 
     with open("./config.json", 'w') as f:
         json.dump(configJSONDict,f)
 
 
-def removeFilterTypeFromJSONForFilterType(selectedFilterTypeObject,filterType):
+def removeFilterTypeFromJSONForFilterType(selectedFilterFileName,filterType):
         
     filterTypeJsonName = 'headFilters'
     allFilterTypeJsonName = 'allHeadFilterTypes'
 
     if filterType == 'Jaw':
-        filterTypeJsonName = 'jawFilter'
+        filterTypeJsonName = 'jawFilters'
         allFilterTypeJsonName = 'allJawFilterTypes'
 
     with open("./config.json", 'r') as f:
         configJSONDict = json.loads(f.read())
 
-    configArray = configJSONDict["configurations"]
+    groupConfigArray = configJSONDict["groupConfig"]
 
-    for machineDict in configArray:
-    	filterFunctionsArray = machineDict['filterFunctions']
-    	for filterFunctionDict in filterFunctionsArray:
-    		filterTypeArray = filterFunctionDict['filterTypes'][filterTypeJsonName]
-    		filterTypeArray.remove(selectedFilterTypeObject.getFilename())
+    for groupDict in groupConfigArray:
+        filterTypeList = groupDict[filterTypeJsonName]
+        if selectedFilterFileName in filterTypeList:
+            filterTypeList.remove(selectedFilterFileName)
 
-
-    configJSONDict[allFilterTypeJsonName].remove(selectedFilterTypeObject.getFilename())
+    if selectedFilterFileName in configJSONDict[allFilterTypeJsonName]:
+        configJSONDict[allFilterTypeJsonName].remove(selectedFilterFileName)
 
     with open("./config.json", 'w') as f:
         json.dump(configJSONDict,f)
 
 
-def addFilterTypeToJSON(filterFunctionObject,filterTypeFrameList,filterType):
-     
-    filterTypeJsonName = 'headFilters'
-    allFilterTypeJsonName = 'allHeadFilterTypes'
-
-    if filterType == 'Jaw':
-        filterTypeJsonName = 'jawFilter'
-        allFilterTypeJsonName = 'allJawFilterTypes'
-
+def addFilterTypeToJSON(fileName,groupNameList,filterType):
 
     with open("./config.json", 'r') as f:
         configJSONDict = json.loads(f.read())
 
-    configArray = configJSONDict["configurations"]
+    groupConfigArray = configJSONDict["groupConfig"]
 
-    allMachineFilenameList = EguanaModel().getAllMachines()
+    for groupConfigDict in groupConfigArray:
+        if groupConfigDict["groupName"] in groupNameList:
+            filterList = groupConfigDict["headFilters"]
+            if filterType == 'Jaw':
+                filterList = groupConfigDict["jawFilters"]
+
+            if (fileName not in filterList):  
+                filterList.append(fileName)
+
+    allFilterList = configJSONDict["allHeadFilterTypes"]
+    if filterType == 'Jaw':
+        allFilterList = configJSONDict["allJawFilterTypes"]
+
+    if (fileName not in allFilterList):  
+        allFilterList.append(fileName)
+
+    with open("./config.json", 'w') as f:
+        json.dump(configJSONDict,f)
+
+
+def removeModuleFromJSON(selectedModuleFileName):
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigArray = configJSONDict["groupConfig"]
+
+    for groupDict in groupConfigArray:
+        moduleList = groupDict['modules']
+        if selectedModuleFileName in moduleList:
+            moduleList.remove(selectedModuleFileName)
+
+    if selectedModuleFileName in configJSONDict['allModules']:
+        configJSONDict['allModules'].remove(selectedModuleFileName)
+
+    with open("./config.json", 'w') as f:
+        json.dump(configJSONDict,f)    
+
+def addModuleToJSON(fileName,groupNameList):
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigArray = configJSONDict["groupConfig"]
+
+    for groupConfigDict in groupConfigArray:
+        if groupConfigDict["groupName"] in groupNameList:
+            moduleList = groupConfigDict["modules"]
+            if fileName not in moduleList:
+                moduleList.append(fileName)
+
+    allModuleList = configJSONDict["allModules"]
     
-    atleastOneMachineEnabled = False
-
-
-    for machineDict in configArray:
-
-        if filterTypeFrameList[allMachineFilenameList.index(machineDict['machineName'])].isEnabled():
-
-            enabledFfFilenameList = filterTypeFrameList[allMachineFilenameList.index(machineDict['machineName'])].getEnabledFilterFunctionNames()
-
-            for ffFileName in enabledFfFilenameList:
-
-                atleastOneMachineEnabled = True
-
-                ffDict = None
-
-                for ffDictTmp in machineDict['filterFunctions']:
-                    if ffFileName in ffDictTmp['filterApplicationName']:
-                        ffDict = ffDictTmp
-                        break
-
-                if ffDict == None:
-                    newFilterFunctionDict = {}
-                    newFilterFunctionDict['filterApplicationName'] = ffFileName
-                    filterTypesDict = {}
-                    filterTypesDict['headFilters'] = []
-                    filterTypesDict['jawFilters'] = []
-                    filterTypesDict[filterTypeJsonName].append(filterFunctionObject.getFilename())
-                    newFilterFunctionDict['filterTypes'] = filterTypesDict
-                    filterFunctionsArray = machineDict['filterFunctions']
-                    filterFunctionsArray.append(newFilterFunctionDict)
-                else:
-                    ffDict['filterTypes'][filterTypeJsonName].append(filterFunctionObject.getFilename())
-
-
-    if atleastOneMachineEnabled:
-        configJSONDict[allFilterTypeJsonName].append(filterFunctionObject.getFilename())
-
+    if fileName not in allModuleList:
+        allModuleList.append(fileName)
 
     with open("./config.json", 'w') as f:
         json.dump(configJSONDict,f)
-
-
 
 def addFilterFunctionToJSON(filterFunctionObject,filterTypeFrameList):
         
@@ -322,43 +314,92 @@ def addFilterFunctionToJSON(filterFunctionObject,filterTypeFrameList):
         json.dump(configJSONDict,f)
 
 
-def addMachineToJSON(selectedMachine,filterTypeFrameList):
+def addMachineToJSON(machineFileName,groupNamesList):
 
 
     with open("./config.json", 'r') as f:
         configJSONDict = json.loads(f.read())
 
-    configArray = configJSONDict["configurations"]
-    allFilterFunctionFunctionNameList = EguanaModel().getAllFilterFunctions()
-
     newMachineDict = {}
+    newMachineDict["machineName"] = machineFileName
+    newMachineDict["groups"] = groupNamesList
 
-    newMachineDict["machineName"] = selectedMachine.getFilename()
+    machineConfigArray = configJSONDict["machineConfig"]
 
-    newFilterFunctionsList = []
-
-    for i in range(len(filterTypeFrameList)):
-        if filterTypeFrameList[i].isEnabled():
-            newFilterFunctionDict = {}
-            newFilterFunctionDict["filterApplicationName"] =  EguanaModel().getFilterObjectFromFunctionName(allFilterFunctionFunctionNameList[i]).getFilename()
-
-            filterTypesDict = {}
-
-            filterTypesDict['headFilters'] = filterTypeFrameList[i].getEnabledHeadFilterTypeNames()
-            filterTypesDict['jawFilters'] = filterTypeFrameList[i].getEnabledJawFilterTypeNames()
-
-            newFilterFunctionDict['filterTypes'] = filterTypesDict
-            newFilterFunctionsList.append(newFilterFunctionDict)
-
-    newMachineDict['filterFunctions'] = newFilterFunctionsList
-    configArray.append(newMachineDict)
+    machineConfigArray.append(newMachineDict)
 
     allMachinesList = configJSONDict["allMachines"]
-    allMachinesList.append(selectedMachine.getFilename())
+    allMachinesList.append(machineFileName)
+
+    with open("./config.json", 'w') as f:
+        json.dump(configJSONDict,f)
+
+
+def addGroupToMachine(groupName,machineFilename):
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+    
+    machineDictList = configJSONDict["machineConfig"]
+
+    for machineDict in machineDictList:
+        if machineFilename == machineDict["machineName"]:
+            machineDict["groups"].append(groupName)
 
 
     with open("./config.json", 'w') as f:
-    	json.dump(configJSONDict,f)
+        json.dump(configJSONDict,f)
+        
+def addGroupToJSON(groupName,headFilterFilenameList,jawFilterFilenameList,moduleFilenameList):
+
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    newGroupDict = {}
+    newGroupDict["groupName"] = groupName
+    newGroupDict["headFilters"] = headFilterFilenameList
+    newGroupDict["jawFilters"] = jawFilterFilenameList
+    newGroupDict["modules"] = moduleFilenameList
+
+    groupConfigList = configJSONDict["groupConfig"]
+    groupConfigList.append(newGroupDict)
+
+
+    allGroupList = configJSONDict["allGroups"]
+    allGroupList.append(groupName)
+    
+    with open("./config.json", 'w') as f:
+        json.dump(configJSONDict,f)    
+
+def removeGroupFromJSON(groupName):
+
+    with open("./config.json", 'r') as f:
+        configJSONDict = json.loads(f.read())
+
+    groupConfigList = configJSONDict["groupConfig"]
+
+
+    for groupDict in groupConfigList:
+        if groupDict["groupName"] == groupName:
+            groupConfigList.remove(groupDict)
+            break;
+
+    allGroupList = configJSONDict["allGroups"]
+    allGroupList.remove(groupName)
+
+
+    machineDictList = configJSONDict["machineConfig"]
+
+    for machineDict in machineDictList:
+        if groupName in machineDict["groups"]:
+            machineDict["groups"].remove(groupName)
+
+
+    
+    with open("./config.json", 'w') as f:
+        json.dump(configJSONDict,f)    
+
 
 
 
