@@ -15,11 +15,12 @@ class DeleteSettingsFrame(Frame):
         self.currentFilterFunctionValue = None
         self.currentHeadFilterTypeValue = None
         self.currentJawFilterTypeValue = None
-
+        self.currentModuleValue = None
+        self.currentGroupValue = None
         self.setupFrame()
 
     def setupFrame(self):
-        dropList = ['Machine', 'Head Filter','Jaw Filter','Module']
+        dropList = ['Machine', 'Head Filter','Jaw Filter','Module','Group']
         dropTitle = StringVar()
         dropTitle.set('Select Type')
         drop = OptionMenu(self,dropTitle,*dropList, command=self.selectTypeCallback)
@@ -39,6 +40,8 @@ class DeleteSettingsFrame(Frame):
 
             self.currentTypeValue = value
 
+            self.eraseConfigValues()
+
             for i in range(1,self.grid_size()[1]): 
                     for element in self.grid_slaves(i,None):
                         element.grid_forget()
@@ -49,10 +52,22 @@ class DeleteSettingsFrame(Frame):
                 self.setupHeadDropDown()
             elif value == 'Jaw Filter':
                 self.setupJawDropDown()
-            else: #'Module'
+            elif value == 'Module':
                 self.setupModuleDropdown()
+            else: #group
+                self.setupGroup()
+
+    def eraseConfigValues(self):
+
+        self.currentMachineTypeValue = None
+        self.currentFilterFunctionValue = None
+        self.currentHeadFilterTypeValue = None
+        self.currentJawFilterTypeValue = None
+        self.currentModuleValue = None
+        self.currentGroupValue = None
 
     def setupMachineDropdown(self):
+        
         machinefileNamesList = jsonHelper.getAllMachineFileNames()
         machineNameList = [objectHelper.getMachineNameFromMachineFilename(machineFilename) for machineFilename in machinefileNamesList]
         dropMachineTitle = StringVar()
@@ -86,6 +101,14 @@ class DeleteSettingsFrame(Frame):
         moduleDropMenu = OptionMenu(self,dropModuleTitle,*moduleNamesList,command=self.moduleSelectedFromOptionsMenu)
         moduleDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')
 
+    def setupGroup(self):
+        groupNameList = jsonHelper.getAllGroups()
+        dropGroupTitle = StringVar()
+        dropGroupTitle.set('Select Group')
+        groupDropMenu = OptionMenu(self,dropGroupTitle,*groupNameList,command=self.groupSelectedFromOptionsMenu)
+        groupDropMenu.grid(row=1, column=0, columnspan=4, sticky='ew')        
+
+
     def machineSelectedFromOptionsMenu(self,value):
 
         if value != self.currentMachineTypeValue:
@@ -106,6 +129,18 @@ class DeleteSettingsFrame(Frame):
 
             if selectedMachineFilename:
                 self.setupSelectedMachineConfig(selectedMachineFilename)
+
+    def groupSelectedFromOptionsMenu(self,value):
+
+        if value != self.currentGroupValue:
+
+            self.currentGroupValue = value
+
+            for i in range(2,self.grid_size()[1]): 
+                for element in self.grid_slaves(i,None):
+                    element.grid_forget()
+
+            self.setupSelectedGroupConfig(value)
 
     def moduleSelectedFromOptionsMenu(self,value):
 
@@ -175,6 +210,9 @@ class DeleteSettingsFrame(Frame):
                 self.setupSelectedFilterType(selectedHeadFileName,'Head')
 
 
+    def setupSelectedGroupConfig(self,groupName):
+
+        Button(self,text='Delete & Close',relief=RAISED,command=lambda:self.deleteGroupButtonPressed(groupName)).grid(row=3,column=1,columnspan=1,sticky=S+E)
 
     def setupSelectedMachineConfig(self,selectedMachineFilename):
 
@@ -188,6 +226,11 @@ class DeleteSettingsFrame(Frame):
 
         Button(self,text='Delete & Close',relief=RAISED,command=lambda:self.deleteModuleButtonPressed(selectedModuleFileName)).grid(row=4,column=1,columnspan=1,sticky=S+E)
 
+
+    def deleteGroupButtonPressed(self, groupName):
+        
+        jsonHelper.removeGroupFromJSON(groupName)
+        self.parent.destroy()
 
     def deleteMachineButtonPressed(self, selectedMachineFileName):
         
@@ -213,8 +256,6 @@ class DeleteSettingsFrame(Frame):
         os.remove('./moduleConfig/'+selectedModuleFileName)    
 
         self.parent.destroy()
-
-
 
 
 

@@ -1,55 +1,49 @@
 {
+  "machineConfig": [
+    {
+      "machineName": "threeDConfig.py",
+      "groups": ["3D"]
+    },
+    {
+      "machineName": "twoDConfig.py",
+      "groups": []
+    },
+    {
+      "machineName": "apasConfig.py",
+      "groups": []
+    },
+    {
+      "machineName": "testConfig.py",
+      "groups": []
+    }
+  ],
+  "groupConfig": [
+    {
+      "groupName": "3D",
+      "headFilters": ["cKroosFilter.py"],
+      "jawFilters": [ "goldFilter.py","ssFilter.py"],
+      "modules": ["stiModule.py"]
+    }
+  ],
   "allMachines": [
     "threeDConfig.py",
     "apasConfig.py",
     "testConfig.py",
     "twoDConfig.py"
   ],
+  "allGroups": [
+    "3D"
+  ],
   "allHeadFilterTypes": [
     "cKroosFilter.py",
     "posFilter.py",
     "rHenriquesFilter.py"
-  ],
-  "groupConfig": [
-    {
-      "jawFilters": [],
-      "modules": [
-        "stiModule.py"
-      ],
-      "groupName": "3D",
-      "headFilters": []
-    }
-  ],
-  "allGroups": [
-    "3D"
-  ],
-  "allModules": [
-    "stiModule.py"
-  ],
-  "machineConfig": [
-    {
-      "groups": [
-        "3D"
-      ],
-      "machineName": "threeDConfig.py"
-    },
-    {
-      "groups": [],
-      "machineName": "twoDConfig.py"
-    },
-    {
-      "groups": [],
-      "machineName": "apasConfig.py"
-    },
-    {
-      "groups": [],
-      "machineName": "testConfig.py"
-    }
   ],
   "allJawFilterTypes": [
     "goldFilter.py",
     "ssFilter.py",
     "joanaFilter.py",
     "erFilter.py"
-  ]
+  ],
+  "allModules": ["stiModule.py"]
 }
