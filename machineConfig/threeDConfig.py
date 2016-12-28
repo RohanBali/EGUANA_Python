@@ -13,17 +13,20 @@ Created on Fri Jul 29 09:36:50 2016
 from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 from tkinter import  DISABLED, NORMAL
 import os, os.path
+import glob
+import re
 
 class ThreeDConfig(EguanaMachineConfig):
+
     name = "3D EMA"
     number_of_coils = 16
     channel_names = ['X','Y','Z','Phi','Theta','RMS','Extra']
     relevant_channels = [True,True,True,True,True,False,False]
-    
-    def __init__(self):
-        EguanaMachineConfig.__init__(self)
+
+    def __init__(self,dirPath):
+        EguanaMachineConfig.__init__(self,dirPath)
         self.buttonName = "Select Directory for 3D EMA"
-        self.getAllowedFilters = ['speech3DFilterConfig.py','swallow3DFilterConfig.py']   
+        self.getAllowedFilters = ['speech3DFilterConfig.py','swallow3DFilterConfig.py']
         
     def whatsMyName(self):
         print("ThreeDConfig")
@@ -74,13 +77,38 @@ class ThreeDConfig(EguanaMachineConfig):
         fileObj.seek(offsetVal,0)
         dataArray = numpy.fromfile(fileObj,numpy.float32)
         numRows = int(len(dataArray)/112)
-        dataMatrix = numpy.zeros((numRows,112))
-
-        print(" Num Rows - " + str(numRows))
-
-        for i in range(len(dataArray)):
-            dataMatrix[int(i/112)][i%112] = dataArray[i]
+        dataMatrix = dataArray.reshape((numRows,16,7))
+        dataMatrix = numpy.swapaxes(dataMatrix,0,2)
+        dataMatrix = numpy.swapaxes(dataMatrix,0,1)
 
         return dataMatrix
+
+
+    def _defineSamplingRate(self):
+
+
+        for i in range(self.getNumTrials()):
+            if self.ifTrialExists(i):
+                filePath = self.posPath + "/" + "%04d"%i + '.pos'
+                fileObj = open(filePath,'r',encoding='iso-8859-1')
+                firstLine = fileObj.readline()
+                secondLine = fileObj.readline()
+                thirdLine = fileObj.readline()
+                fourthLine = fileObj.readline()
+                samplingRateString = re.sub('[^0-9]','', fourthLine)
+
+                self.kinematic_samplingrate = int(samplingRateString)
+
+                break
+
+
+    def getNumTrials(self):
+        os.chdir(self.posPath)
+        return len(glob.glob("*.pos"))
+
+
+
+
+
 
         
