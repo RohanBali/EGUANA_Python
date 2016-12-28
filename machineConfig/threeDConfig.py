@@ -16,6 +16,9 @@ import os, os.path
 
 class ThreeDConfig(EguanaMachineConfig):
     name = "3D EMA"
+    number_of_coils = 16
+    channel_names = ['X','Y','Z','Phi','Theta','RMS','Extra']
+    relevant_channels = [True,True,True,True,True,False,False]
     
     def __init__(self):
         EguanaMachineConfig.__init__(self)
@@ -77,4 +80,7 @@ class ThreeDConfig(EguanaMachineConfig):
 
         for i in range(len(dataArray)):
             dataMatrix[int(i/112)][i%112] = dataArray[i]
+
+        return dataMatrix
+
         

@@ -9,7 +9,11 @@ import sys
 
 class EguanaMachineConfig():
     name = ""
-    
+    number_of_coils = 0
+    channel_names = []
+    relevant_channels = []
+
+
     def __init__(self):
         #self.setupPlotAndFilterStates()
         self.dirPath = ""
@@ -30,5 +34,3 @@ class EguanaMachineConfig():
         fullPath =  sys.modules[self.__class__.__module__].__file__
         components = fullPath.split('/')
         return components[-1]
-
-
