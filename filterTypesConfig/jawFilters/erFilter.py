@@ -1,6 +1,7 @@
 from filterTypesConfig.eguanaFilterTypesConfig import EguanaFilterTypesConfig
 import numpy as np
 from matplotlib.mlab import PCA
+import math
 
 class ErFilter(EguanaFilterTypesConfig):
 
@@ -17,7 +18,7 @@ class ErFilter(EguanaFilterTypesConfig):
 		machines or different filters
 		"""
 		
-		ANGLE_PC_CORRELATION_CONST = 0.52;
+		ANGLE_PC_CORRELATION_CONST = 0.52/180*math.pi;
 		"""
 		check the size of lists
 		"""
@@ -26,23 +27,23 @@ class ErFilter(EguanaFilterTypesConfig):
 			"""
 			take out the Y component to calculate PCA
 			"""
-			ref_list_ignore_Y = scipy.delete(referenceSignalList,1,1);
+			ref_list_ignore_Y = np.delete(referenceSignalList,1,1);
 			dataList = np.array (ref_list_ignore_Y);
 			
 			"""
 			do PCA on dataList, then calculate alpha using the experimentally determined correlation constant
 			"""
 			
-			alpha = ANGLE_PC_CORRELATION_CONST * (PCA (dataList))[0];
+			alpha = ANGLE_PC_CORRELATION_CONST * (PCA (dataList)).Y[:,0];
 			
 			""" transformation of articulatorSignalList to correctedList
 			"""
 			ss_ref_arti = articulatorSignalList - referenceSignalList;
-			
+			correctedList = np.zeros((len(alpha),3))
 			for i in range(len(alpha)): 
-				correctedList[0][i] = cos(alpha[i]) * ss_ref_arti[0][i] + sin(alpha[i]) * ss_ref_arti[2][i];
-				correctedList[1][i] = ss_ref_arti[1][i];
-				correctedList[2][i] = -sin(alpha[i]) * ss_ref_arti[0][i] + cos(alpha[i]) * ss_ref_arti[2][i];
+				correctedList[i][0] = np.cos(alpha[i]) * ss_ref_arti[i][0] + np.sin(alpha[i]) * ss_ref_arti[i][2];
+				correctedList[i][1] = ss_ref_arti[i][1];
+				correctedList[i][2] = -np.sin(alpha[i]) * ss_ref_arti[i][0] + np.cos(alpha[i]) * ss_ref_arti[i][2];
 				
 			return correctedList;
 		else:
