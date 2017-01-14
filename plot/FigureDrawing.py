@@ -64,14 +64,14 @@ def getEguanaMachinePlotTileFigure(
 	})
 
 	#do plots for different coils but same channel share y axis
-	channelShareY=kwargs.get('channelShareY',True)
+	channelShareY=kwargs.get('channelShareY',False)
 
 	#do plots for different channels but same coil share x axis
 	#this value will be ignored if all plots share x axis
-	coilShareX=kwargs.get('coilShareX',True) 
+	coilShareX=kwargs.get('coilShareX',False) 
 
 	#do all plots share x axis
-	allPlotsShareX=kwargs.get('allPlotsShareX',True)
+	allPlotsShareX=kwargs.get('allPlotsShareX',False)
 	if allPlotsShareX==True:
 		coilShareX=True
 
