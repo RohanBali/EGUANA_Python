@@ -1,4 +1,4 @@
-from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg, ToolTip
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 
@@ -91,6 +91,43 @@ class EguanaFigureToolBarTkAgg(NavigationToolbar2TkAgg):
 		except:
 			return NavigationToolbar2TkAgg._Button(self,text,file,command,extension)
 
+	#overwrite NavigationToolbar2TkAgg::set_message to append data cursor messages
+	def set_message(self, s):
+		if s!='' and self._data_cursor_toggled==False:
+			self._cursorPrompt=''
+		self.message.set(s+'\n'+self._cursorPrompt)
+
+	#overwrite NavigationToolbar2TkAgg::_init_toolbar to get handle of buttons (especially that of data cursor button)
+	def _init_toolbar(self):
+		xmin, xmax = self.canvas.figure.bbox.intervalx
+		height, width = 50, xmax-xmin
+		tkinter.Frame.__init__(self, master=self.window,
+			width=int(width), height=int(height),
+			borderwidth=2)
+
+		self.update()  # Make axes menu
+		self._ButtonHandleList=[]
+		self._dataCursorButtonHandle=None
+
+		for text, tooltip_text, image_file, callback in self.toolitems:
+			if text is None:
+				# spacer, unhandled in Tk
+				pass
+			else:
+				button = self._Button(text=text, file=image_file,
+						command=getattr(self, callback))
+				self._ButtonHandleList.append(button)
+				if text=='Cursor':
+					self._dataCursorButtonHandle=button
+
+			if tooltip_text is not None:
+				ToolTip.createToolTip(button, tooltip_text)
+
+		self.message = tkinter.StringVar(master=self)
+		self._message_label = tkinter.Label(master=self, textvariable=self.message)
+		self._message_label.pack(side=tkinter.RIGHT)
+		self.pack(side=tkinter.BOTTOM, fill=tkinter.X)
+
 	def __init__(self,canvas,frame):
 		NavigationToolbar2TkAgg.__init__(self,canvas,frame)
 
@@ -114,6 +151,9 @@ class EguanaFigureToolBarTkAgg(NavigationToolbar2TkAgg):
 		
 		#mouse button click handler for data cursor part
 		self._cid_data_cursor_press=self.canvas.mpl_connect('button_press_event',self._data_cursor_buttonpress)
+
+		#used for message bar
+		self._cursorPrompt=''
 
 		#cursor horizontal and vertical line instance (Line2D)
 		#lines will not show if self._cursorLineEnable is False
@@ -320,11 +360,22 @@ class EguanaFigureToolBarTkAgg(NavigationToolbar2TkAgg):
 				if wantFindApprox is True:
 					approxIndex=self._find_approx_point(self._currentPlot,dataX,dataY,event.x,event.y)
 					if approxIndex is not None:
-						self._approxLastIndex=approxIndex
 						approxDataX=self._currentPlot.xData[approxIndex]
 						approxDataY=self._currentPlot.yData[approxIndex]
+						#isApproxOnExistingMarker=False
+						#for marker in self._currentPlot.dataMarkerList:
+						#	if marker.index==approxIndex:
+						#		isApproxOnExistingMarker=True
+						#		break
+						##message='(x=%.2f,y=%.2f))'%(approxDataX,approxDataY)
+						#if isApproxOnExistingMarker:
+						#	pass
+						#	self.set_message('(Right Click to delete the marker on '+message)
+						#else:
+						#	self.set_message('(Left Click to add a marker on '+message)
+						self._approxLastIndex=approxIndex
 						self._approxMarker=self._currentPlot.axeHandle.plot([approxDataX,approxDataX],[approxDataY,approxDataY],**self.approx_marker_params)
-				
+						
 			else:
 				#from an axe to an axe
 				if currentPlot is self._currentPlot:
@@ -347,7 +398,8 @@ class EguanaFigureToolBarTkAgg(NavigationToolbar2TkAgg):
 						approxIndex=self._find_approx_point(self._currentPlot,dataX,dataY,event.x,event.y)
 						if approxIndex is None:
 							self._clearApproxMarker()
-						elif self._approxMarker is not None and self._approxLastIndex!=approxIndex:
+						elif not(self._approxMarker is not None and self._approxLastIndex==approxIndex):
+							#cannot reuse old one
 							self._clearApproxMarker()
 							self._approxLastIndex=approxIndex
 							approxDataX=self._currentPlot.xData[approxIndex]
@@ -475,6 +527,14 @@ class EguanaFigureToolBarTkAgg(NavigationToolbar2TkAgg):
 		if self._data_cursor_toggled==True:
 			self._cid_data_cursor_move=self.canvas.mpl_disconnect(self._cid_data_cursor_move)
 			self._data_cursor_toggled=False
+			self._cursorPrompt='Data Cursor Off'
+			self.set_message(self.mode)
+			if self._dataCursorButtonHandle is not None:
+				self._dataCursorButtonHandle.configure(relief=tkinter.RAISED)
 		else:
 			self._cid_data_cursor_move=self.canvas.mpl_connect('motion_notify_event',self.data_cursor_move)
 			self._data_cursor_toggled=True
+			self._cursorPrompt='Data Cursor On (Left Click: Add, Right Click: Delete)'
+			self.set_message(self.mode)
+			if self._dataCursorButtonHandle is not None:
+				self._dataCursorButtonHandle.configure(relief=tkinter.SUNKEN)
