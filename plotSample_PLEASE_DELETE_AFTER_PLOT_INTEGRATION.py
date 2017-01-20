@@ -35,5 +35,5 @@ def getSampleFrame_MachinePlotTile(parentFrame):
 root = tkinter.Tk()
 root.geometry("550x450+300+300")
 sample=getSampleFrame_MachinePlotTile(root)
-sample.pack()
+sample.pack(fill=tkinter.BOTH)
 root.mainloop()

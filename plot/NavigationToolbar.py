@@ -177,7 +177,8 @@ class EguanaFigureToolBarTkAgg(NavigationToolbar2TkAgg):
 				if currentMarker.text is None:
 					currentMarker.text=plot.axeHandle.text(
 						curMarkerDataX,curMarkerDataY,
-						'x='+str(curMarkerDataX)+'\ny='+str(curMarkerDataY),
+						'x=%.2f\ny=%.2f'%(curMarkerDataX,curMarkerDataY),
+						#'x='+str(curMarkerDataX)+'\ny='+str(curMarkerDataY),
 						bbox=self.data_mark_text_bbox)
 
 				#get position of text and start to correct
@@ -417,20 +418,27 @@ class EguanaFigureToolBarTkAgg(NavigationToolbar2TkAgg):
 				self.canvas.draw_idle()
 	
 	def _data_cursor_buttonpress(self,event):
+		isLeftButtonPress=False
+		isRightButtonPress=False
+		if event.button==1:
+			isLeftButtonPress=True
+		elif event.button==3:
+			isRightButtonPress=True
+
 		#this event is always bound
-		if event.button==1 and self._data_cursor_toggled:
+		if (isLeftButtonPress or isRightButtonPress) and self._data_cursor_toggled:
 			#left mouse press
 			self._clearApproxMarker()
 			self._mouse_move_helper(event,wantFindApprox=False,tryCursorLine=False)
 			dataX,dataY=self._currentPlot.axeHandle.transData.inverted().transform((event.x,event.y))
 			approxIndex=self._find_approx_point(self._currentPlot,dataX,dataY,event.x,event.y)
 			if approxIndex is not None:
-				#click on a data point without any mark: create a new mark
-				#click on an existing mark: delete this mark
+				#left click on a data point without any mark: create a new mark
+				#right click on an existing mark: delete this mark
 				self._currentMarkerPlot=self._currentPlot
 				
 				for marker in self._currentMarkerPlot.dataMarkerList:
-					if marker.index==approxIndex:
+					if marker.index==approxIndex and isRightButtonPress:
 						#make sure it is not "current" mark first
 						if self._currentMarkerPlot.curDataMarker is marker:
 							#try to find the one closest to this mark and it is the next "current" mark
@@ -438,7 +446,7 @@ class EguanaFigureToolBarTkAgg(NavigationToolbar2TkAgg):
 								diffX=len(self._currentMarkerPlot.xData)
 								for candidate in self._currentMarkerPlot.dataMarkerList:
 									if candidate is not marker:
-										curDiffX=abs(marker.index-self._currentMarkerPlot.dataMarkerList[candidateIndex].index)
+										curDiffX=abs(marker.index-candidate.index)
 										if curDiffX<=diffX:
 											self._currentMarkerPlot.curDataMarker=candidate
 											diffX=curDiffX
@@ -449,7 +457,7 @@ class EguanaFigureToolBarTkAgg(NavigationToolbar2TkAgg):
 						approxIndex=None
 						break
 				
-				if approxIndex is not None:
+				if approxIndex is not None and isLeftButtonPress:
 					self._currentMarkerPlot.dataMarkerList.append(EguanaFigureToolBarTkAgg.markerInfo(self._currentMarkerPlot,approxIndex))
 					self._currentMarkerPlot.curDataMarker=self._currentMarkerPlot.dataMarkerList[-1]
 					self._updateDataMarkerPosition(self._currentMarkerPlot,[self._currentMarkerPlot.curDataMarker])
