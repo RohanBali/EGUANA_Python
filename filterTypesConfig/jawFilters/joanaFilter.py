@@ -44,26 +44,39 @@ class JoanaFilter(EguanaFilterTypesConfig):
 			LH_Vector = referenceSignalList[:,[5,6,7]]
 			'''print (LH_Vector[1])'''
 			RH_Vector = referenceSignalList[:,[8,9,10]]
-			print(diffX.shape)
+			'''print(diffX.shape)'''
+			
 			correctedList = np.zeros((len(diffX),3))
 
 			for i in range (referenceSignalList.shape[0]):
 			
 				"""define new x,y,z axes """
-				transX_axis = (-np.cos(theta[i]) * np.cos(phi[i]), -np.cos(theta[i]) * np.sin(phi[i]), -np.sin(theta[i]));   	'''converting spherical to cartisian'''				
+				transX_axis = (-np.cos(theta[i]) * np.cos(phi[i]), -np.cos(theta[i]) * np.sin(phi[i]), -np.sin(theta[i]))   	
+				'''converting spherical to cartisian'''
 				
-				transY_axis = ( - RH_Vector[i] + LH_Vector[i])
+				
+				transY_axis = ( RH_Vector[i] - LH_Vector[i])
 				'''position of RH - position of LF'''
-				transY_axis = transY_axis/np.linalg.norm(transY_axis)									
+				transZ_axis = np.cross(transY_axis, transX_axis)
+				transZ_axis = transZ_axis/np.linalg.norm(transZ_axis)
+				transY_axis = np.cross(transZ_axis, transX_axis)									
 				'''normalized => vector t'''
-				transZ_axis = np.cross(transX_axis, transY_axis) 										
+				
 				'''z-axis => x-axis cross y-axis'''
 				
 				np.reshape(transX_axis, (1,3))
 				np.reshape(transY_axis, (1,3))
 				np.reshape(transZ_axis, (1,3))
 				
-				transMatrix =(transX_axis, transY_axis,transZ_axis)
+				'''print(theta[i])
+				print(phi[i])
+				print (transX_axis)
+				print (transY_axis)
+				print (transZ_axis)
+				'''
+
+				transMatrix =(transX_axis, transY_axis, transZ_axis)
+				
 				transMatrix = np.reshape(transMatrix, (3,3))
 				
 				diffVec = np.matrix([diffX[i], diffY[i], diffZ[i]])
