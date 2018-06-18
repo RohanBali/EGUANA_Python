@@ -11,10 +11,11 @@ class TestConfig(EguanaMachineConfig):
     name = 'Test'
 
     def __init__(self):
-        EguanaMachineConfig.__init__(self)   
-    
+        super(TestConfig, self).__init__()
+        self.machineName = "Test"
+
     def readHeadFile(self,filename):
         return 1
-        
+
     def whatsMyName(self):
         print("ThreeDConfig")

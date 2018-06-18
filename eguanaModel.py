@@ -13,37 +13,37 @@ class EguanaModel(object):
 
         def getAllFilterFunctions(self):
 
-            with open('config.json') as data_file:    
+            with open('config.json') as data_file:
                 data = json.load(data_file)
 
             filterFunctionFilenameList = data['allFilterFunctions']
-            
+
             return filterFunctionFilenameList
 
 
         def getAllHeadFilterTypes(self):
 
-            with open('config.json') as data_file:    
+            with open('config.json') as data_file:
                 data = json.load(data_file)
 
             headFilterList = data['allHeadFilterTypes']
-            
+
             return headFilterList
 
         def getAllJawFilterTypes(self):
 
-            with open('config.json') as data_file:    
+            with open('config.json') as data_file:
                 data = json.load(data_file)
 
             jawFilterList = data['allJawFilterTypes']
-            
+
             return jawFilterList
 
         def getAllowedFilterFunctions(self):
 
             allowedFilterFunctions = []
 
-            with open('config.json') as data_file:    
+            with open('config.json') as data_file:
                 data = json.load(data_file)
 
 
@@ -64,13 +64,13 @@ class EguanaModel(object):
 
         def getAllowedHeadFilterTypes(self):
             return self.getAllowedHeadFilterTypesForFilterFunction(self.filterFunction)
-            
+
 
         def getAllowedHeadFilterTypesForFilterFunction(self,ffObject):
 
             headFilters = []
 
-            with open('config.json') as data_file:    
+            with open('config.json') as data_file:
                 jsonData = json.load(data_file)
 
 
@@ -93,14 +93,14 @@ class EguanaModel(object):
 
 
         def getAllowedJawFilterTypes(self):
-            
+
             return self.getAllowedJawFilterTypesForFilterFunction(self.filterFunction)
 
 
         def getAllowedJawFilterTypesForFilterFunction(self,ffObjects):
-            
+
             jawFilters = []
-            with open('config.json') as data_file:    
+            with open('config.json') as data_file:
                 jsonData = json.load(data_file)
 
 
@@ -109,7 +109,7 @@ class EguanaModel(object):
 
             className = ffObjects.__class__.__name__
             fileName = className[0].lower() + className[1:] + '.py'
-            
+
             configJsonArray = jsonData['configurations']
 
             for i in configJsonArray:
@@ -132,7 +132,7 @@ class EguanaModel(object):
                     components = filterTypeName.split('.')
                     fileName = components[0]
                     className = fileName[0].upper() + fileName[1:]
-                    module = __import__("filterTypesConfig.jawFilters."+fileName,fromlist=["filterTypesConfig.jawFilters."])                        
+                    module = __import__("filterTypesConfig.jawFilters."+fileName,fromlist=["filterTypesConfig.jawFilters."])
                     classVar = getattr(module,className)
                     classObject = classVar()
                     filterTypeObjectArray.append(classObject)
@@ -141,7 +141,7 @@ class EguanaModel(object):
                     components = filterTypeName.split('.')
                     fileName = components[0]
                     className = fileName[0].upper() + fileName[1:]
-                    module = __import__("filterTypesConfig.headFilters."+fileName,fromlist=["filterTypesConfig.headFilters."])                        
+                    module = __import__("filterTypesConfig.headFilters."+fileName,fromlist=["filterTypesConfig.headFilters."])
                     classVar = getattr(module,className)
                     classObject = classVar()
                     filterTypeObjectArray.append(classObject)
@@ -150,25 +150,25 @@ class EguanaModel(object):
 
 
         def getFilterFunctionObjectsFromFunctionNameArray(self,filterFunctionNameArray):
-        
+
             filterFunctionObjectArray = []
 
             for filterFunctionName in filterFunctionNameArray:
                 components = filterFunctionName.split('.')
                 fileName = components[0]
                 className = fileName[0].upper() + fileName[1:]
-                module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])                        
+                module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])
                 classVar = getattr(module,className)
                 classObject = classVar()
                 filterFunctionObjectArray.append(classObject)
-                
-            return filterFunctionObjectArray     
+
+            return filterFunctionObjectArray
 
         def getFilterObjectFromFunctionName(self,filterFunctionName):
             components = filterFunctionName.split('.')
             fileName = components[0]
             className = fileName[0].upper() + fileName[1:]
-            module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])                        
+            module = __import__("filterConfig."+fileName,fromlist=["filterConfig."])
             classVar = getattr(module,className)
             classObject = classVar()
             return classObject
@@ -177,7 +177,7 @@ class EguanaModel(object):
             components = machineName.split('.')
             fileName = components[0]
             className = fileName[0].upper() + fileName[1:]
-            module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])                        
+            module = __import__("machineConfig."+fileName,fromlist=["machineConfig."])
             classVar = getattr(module,className)
             classObject = classVar()
             return classObject
@@ -194,5 +194,3 @@ class EguanaModel(object):
         return getattr(self.instance, name)
     def __setattr__(self, name):
         return setattr(self.instance, name)
-
-    

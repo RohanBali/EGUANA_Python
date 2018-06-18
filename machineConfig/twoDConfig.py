@@ -17,11 +17,10 @@ from tkinter import  DISABLED, NORMAL
 import numpy
 
 class TwoDConfig(EguanaMachineConfig):
-    name = "2D EMA"
-    
+
     def __init__(self):
-        EguanaMachineConfig.__init__(self)   
-        self.buttonName = "Select Directory for 2D EMA"
+        super(TwoDConfig, self).__init__()
+        self.machineName = "2D EMA"
         self.posPath = ""
 
     def setupPlotAndFilterStates(self):
@@ -35,7 +34,7 @@ class TwoDConfig(EguanaMachineConfig):
     def isDirectoryValid(self, path):
     	fileFound = 0
     	if 'pos' in os.listdir(path):
-    		posPath = path + '/pos'	
+    		posPath = path + '/pos'
     		for fileName in os.listdir(posPath):
     			if fileName.endswith('.pos'):
     				fileFound = 1
@@ -75,24 +74,3 @@ class TwoDConfig(EguanaMachineConfig):
 
         for i in range(len(dataArray)):
             dataMatrix[int(i/112)][i%112] = dataArray[i]
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
