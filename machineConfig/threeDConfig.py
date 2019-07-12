@@ -16,32 +16,22 @@ import os, os.path
 
 class ThreeDConfig(EguanaMachineConfig):
     name = "3D EMA"
-    
+
     def __init__(self):
-        EguanaMachineConfig.__init__(self)
-        self.buttonName = "Select Directory for 3D EMA"
-        self.getAllowedFilters = ['speech3DFilterConfig.py','swallow3DFilterConfig.py']   
-        
-    def whatsMyName(self):
-        print("ThreeDConfig")
+        super(ThreeDConfig, self).__init__()
+        self.machineName = "3D EMA"
+        self.getAllowedFilters = ['speech3DFilterConfig.py','swallow3DFilterConfig.py']
 
-    def setupPlotAndFilterStates(self):
-        self.plot3DKButtonState = 'normal'
-        self.plot3DDstButtonState = 'normal'
-        self.plot3DDpButtonState = 'normal'
-        self.plot2DKButtonState = 'disabled'
-        self.plot2DDstButtonState = 'disabled'
-        self.plot2DDpButtonState = 'disabled'
 
-    
     def isDirectoryValid(self, path):
         fileFound = 0
-        if 'pos' in os.listdir(path):
-            posPath = path + '/pos' 
+        if 'rawpos' in os.listdir(path):
+            posPath = os.path.join(path,'rawpos')
             for fileName in os.listdir(posPath):
                 if fileName.endswith('.pos'):
                     fileFound = 1
                     break
+        print(fileFound)
         return fileFound
 
     def ifTrialExists(self, trialNum):
@@ -59,7 +49,7 @@ class ThreeDConfig(EguanaMachineConfig):
     def setDirPath(self,path):
         super(ThreeDConfig,self).setDirPath(path)
         self.posPath = self.dirPath + '/pos'
- 
+
 
     def getDataForTrialNumber(self,trialNum):
 
@@ -77,4 +67,3 @@ class ThreeDConfig(EguanaMachineConfig):
 
         for i in range(len(dataArray)):
             dataMatrix[int(i/112)][i%112] = dataArray[i]
-        

@@ -9,14 +9,13 @@ from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 
 class ApasConfig(EguanaMachineConfig):
     name = "APAS"
-    
+
     def __init__(self):
-        EguanaMachineConfig.__init__(self)   
-        self.buttonName = "Select Directory for the APAS system"
-        print("ok")
-    
+        super(ApasConfig, self).__init__()
+        self.machineName = "APAS system"
+
     def readHeadFile(self,filename):
         return 1
-        
+
     def whatsMyName(self):
         print("ThreeDConfig")

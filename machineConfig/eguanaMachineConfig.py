@@ -9,18 +9,19 @@ import sys
 
 class EguanaMachineConfig():
     name = ""
-    
+
     def __init__(self):
         #self.setupPlotAndFilterStates()
         self.dirPath = ""
-        
+        self.machineName = ""
+
     def isDirectoryValid(self, path):
         return
 
     def ifTrialExists(self, trialNum):
         return
 
-    def getDataForTrialNumber(self,trailNum):
+    def getDataForTrialNumber(self, trailNum):
         return
 
     def setDirPath(self,path):
@@ -30,5 +31,3 @@ class EguanaMachineConfig():
         fullPath =  sys.modules[self.__class__.__module__].__file__
         components = fullPath.split('/')
         return components[-1]
-
-

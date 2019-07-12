@@ -1,8 +1,8 @@
 import os, os.path
 
-from tkinter import *
-from tkinter import filedialog, FLAT, PhotoImage, Menu, CENTER, S, NW,NE, SW,W,SE, E, Toplevel, Entry, messagebox, simpledialog
-from tkinter import Tk, RIGHT, RAISED, ttk, Frame, Button, Label, Text, TOP,RIDGE, BOTH,BOTTOM, Y,X,W, N, LEFT, SUNKEN
+from eguana_base_widget import EguanaDefaultWidget
+from eguana_widgets import EguanaMainWidget
+from machineManager import *
 
 from egdialogs import CoilNumDialog
 from egmenu import EguanaMenu
@@ -13,44 +13,33 @@ from eguanaModel import EguanaModel
 
 import math
 
+from PyQt5.QtGui import *
+from PyQt5.Qt import *
+import sys
+
+
 from machineConfig.eguanaMachineConfig import EguanaMachineConfig
 
-class EguanaInit(object):
-    @staticmethod
-    def get_eguana_root_dir_name():
-        drive_name = os.path.splitdrive(sys.executable)[0]
-        is_unix    = drive_name == ''
-        is_windows = not is_unix
 
-        if is_unix:
-            eguana_root_dir = '/eguana'
-        else:
-            eguana_root_dir = drive_name+"\\\\eguana"
-        return eguana_root_dir
+class EguanaMainWindow(QMainWindow):
 
-    @staticmethod
-    def eguana_root_dir_exists():
-        eguana_dir_name = EguanaInit.get_eguana_root_dir_name()
-        return os.path.exists(eguana_dir_name)
+    def __init__(self, parent=None):
 
-    # To do
-    @staticmethod
-    def create_eguana_root_dir():
-        eguana_dir_name = EguanaInit.get_eguana_root_dir_name()
-        #os.makedirs(eguana_dir_name)
-        #os.chown(eguana_dir_name, int(os.getenv('SUDO_UID')), int(os.getenv('SUDO_GID')))
-        print(os.getenv("SUDO_USER"))
+        super(EguanaMainWindow, self).__init__(parent)
+        self.resize(QDesktopWidget().availableGeometry(self).size() * 0.9)
+        self.title = 'EGUANA'
+        self.setWindowTitle(self.title)
+        base_widget = EguanaMainWidget(self)
+        self.setCentralWidget(base_widget)
 
-class EguanaGUI(Frame):
+
+class EguanaGUI():
 
     def __init__(self, parent):
         Frame.__init__(self, parent)
 
         self.parent = parent
         self.initUI()
-
-        # if not EguanaInit.eguana_root_dir_exists():
-        #     EguanaInit.create_eguana_root_dir()
 
     def initUI(self):
 
@@ -317,20 +306,10 @@ class EguanaGUI(Frame):
                 self.photoName = "eguana2.gif"
                 self.changeImage()
 
-def main():
-
-    global app
-    global root
-    root = Tk()
-
-    sw = root.winfo_screenwidth()
-    sh = root.winfo_screenheight()
-
-    root.geometry('%dx%d+%d+%d' % (sw, sh, 0, 0))
-
-    app = EguanaGUI(root)
-
-    root.mainloop()
 
 if __name__ == '__main__':
-    main()
+
+    app = QApplication(sys.argv)
+    ex = EguanaMainWindow()
+    ex.show()
+    sys.exit(app.exec_())
